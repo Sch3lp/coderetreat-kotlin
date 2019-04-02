@@ -5,30 +5,32 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
 
     fun receiveCommand(command: RoverCommand): Rover {
         return when (command) {
-            is RoverCommand.MoveCommand -> Rover(facingDirection = this.facingDirection, position = move(command))
-            is RoverCommand.RotateCommand -> Rover(facingDirection = rotate(command), position = this.position)
+            is RoverCommand.MoveCommand   -> move(command)
+            is RoverCommand.RotateCommand -> rotate(command)
         }
     }
 
-    private fun rotate(rotateCommand: RoverCommand.RotateCommand): Direction {
-        return when (rotateCommand) {
+    private fun rotate(rotateCommand: RoverCommand.RotateCommand): Rover {
+        val newDirection = when (rotateCommand) {
             is Right -> facingDirection.rotateClockwise()
-            is Left -> facingDirection.rotateCounterClockwise()
+            is Left  -> facingDirection.rotateCounterClockwise()
         }
+        return Rover(facingDirection = newDirection, position = this.position)
     }
 
-    private fun move(moveCommand: RoverCommand.MoveCommand): Position {
+    private fun move(moveCommand: RoverCommand.MoveCommand): Rover {
         val stepDirection = when (moveCommand) {
-            is Forwards -> StepDirection.UP
+            is Forwards  -> StepDirection.UP
             is Backwards -> StepDirection.DOWN
         }
 
-        return when (facingDirection) {
+        val newPosition = when (facingDirection) {
             Direction.NORTH -> position.stepY(stepDirection)
-            Direction.EAST -> position.stepX(stepDirection)
+            Direction.EAST  -> position.stepX(stepDirection)
             Direction.SOUTH -> position.stepY(stepDirection.flip())
-            Direction.WEST -> position.stepX(stepDirection.flip())
+            Direction.WEST  -> position.stepX(stepDirection.flip())
         }
+        return Rover(facingDirection = this.facingDirection, position = newPosition)
     }
 
     fun receiveCommands(commands: List<RoverCommand>): Rover {
