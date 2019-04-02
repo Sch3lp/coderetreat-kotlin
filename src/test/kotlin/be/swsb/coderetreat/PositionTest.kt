@@ -41,4 +41,9 @@ class PositionTest {
         assertThat(actual).isEqualTo(Position(185684, 948576))
     }
 
+    @Test
+    fun flipStepDirection_UpBecomesDownAndViceVersa() {
+        assertThat(StepDirection.UP.flip()).isEqualTo(StepDirection.DOWN)
+        assertThat(StepDirection.DOWN.flip()).isEqualTo(StepDirection.UP)
+    }
 }
