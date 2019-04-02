@@ -163,4 +163,31 @@ class RoverTest {
 
         assertThat(movedRover).isEqualTo(Rover(position = Position(2, 0), facingDirection = Direction.WEST))
     }
+
+    @Test
+    fun aRoverFacingNorth_UponReceivingRight_RotatesToEast() {
+        val aRover = Rover(facingDirection = Direction.NORTH)
+
+        val rotatedRover = aRover.receiveCommand(Right)
+
+        assertThat(rotatedRover).isEqualTo(Rover(facingDirection = Direction.EAST, position = aRover.position))
+    }
+
+    @Test
+    fun aRoverFacingNorth_UponReceivingRight4Times_RotatesBackToNorth() {
+        val aRover = Rover(facingDirection = Direction.NORTH)
+
+        val rotatedRover = aRover.receiveCommand(Right).receiveCommand(Right).receiveCommand(Right).receiveCommand(Right)
+
+        assertThat(rotatedRover).isEqualTo(Rover(facingDirection = Direction.NORTH, position = aRover.position))
+    }
+
+    @Test
+    fun aRoverFacingNorth_UponReceivingLeft4Times_RotatesBackToNorth() {
+        val aRover = Rover(facingDirection = Direction.NORTH)
+
+        val rotatedRover = aRover.receiveCommand(Left).receiveCommand(Left).receiveCommand(Left).receiveCommand(Left)
+
+        assertThat(rotatedRover).isEqualTo(Rover(facingDirection = Direction.NORTH, position = aRover.position))
+    }
 }

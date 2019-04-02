@@ -6,13 +6,20 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
     fun receiveCommand(command: RoverCommand): Rover {
         return when (command) {
             is RoverCommand.MoveCommand -> Rover(facingDirection = this.facingDirection, position = move(command))
-            is RoverCommand.RotateCommand -> Rover(facingDirection = this.facingDirection, position = this.position)
+            is RoverCommand.RotateCommand -> Rover(facingDirection = rotate(command), position = this.position)
+        }
+    }
+
+    private fun rotate(rotateCommand: RoverCommand.RotateCommand): Direction {
+        return when (rotateCommand) {
+            is Right -> facingDirection.rotateClockwise()
+            is Left  -> facingDirection.rotateCounterClockwise()
         }
     }
 
     private fun move(moveCommand: RoverCommand.MoveCommand): Position {
         val stepDirection = when (moveCommand) {
-            is Forwards -> StepDirection.UP
+            is Forwards  -> StepDirection.UP
             is Backwards -> StepDirection.DOWN
         }
 
@@ -23,13 +30,6 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
             Direction.WEST -> position.stepX(stepDirection.flip())
         }
     }
-}
-
-enum class Direction {
-    NORTH,
-    EAST,
-    SOUTH,
-    WEST;
 }
 
 
