@@ -3,18 +3,14 @@ package be.swsb.coderetreat
 data class Rover(val facingDirection: Direction = Direction.NORTH,
                  val position: Position = Position(0, 0)) {
 
-    fun receiveCommand(command: Command): Rover {
+    fun receiveCommand(command: RoverCommand): Rover {
         return when (command) {
-            is Command.MoveCommand -> Rover(facingDirection = this.facingDirection, position = move(command))
-            is Command.RotateCommand -> Rover(facingDirection = rotate(command), position = this.position)
+            is RoverCommand.MoveCommand -> Rover(facingDirection = this.facingDirection, position = move(command))
+            is RoverCommand.RotateCommand -> Rover(facingDirection = this.facingDirection, position = this.position)
         }
     }
 
-    private fun rotate(rotateCommand: Command.RotateCommand): Direction {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
-
-    private fun move(moveCommand: Command.MoveCommand): Position {
+    private fun move(moveCommand: RoverCommand.MoveCommand): Position {
         val stepDirection = when (moveCommand) {
             is Forwards -> StepDirection.UP
             is Backwards -> StepDirection.DOWN
@@ -33,22 +29,22 @@ enum class Direction {
     NORTH,
     EAST,
     SOUTH,
-    WEST
+    WEST;
 }
 
 
-sealed class Command {
-    sealed class MoveCommand : Command()  {
+sealed class RoverCommand {
+    sealed class MoveCommand : RoverCommand()  {
         object Forwards : MoveCommand()
         object Backwards : MoveCommand()
     }
-    sealed class RotateCommand : Command()  {
+    sealed class RotateCommand : RoverCommand()  {
         object Right : RotateCommand()
         object Left : RotateCommand()
     }
 }
 
-typealias Forwards = Command.MoveCommand.Forwards
-typealias Backwards = Command.MoveCommand.Backwards
-typealias Right = Command.RotateCommand.Right
-typealias Left = Command.RotateCommand.Left
+typealias Forwards = RoverCommand.MoveCommand.Forwards
+typealias Backwards = RoverCommand.MoveCommand.Backwards
+typealias Right = RoverCommand.RotateCommand.Right
+typealias Left = RoverCommand.RotateCommand.Left
