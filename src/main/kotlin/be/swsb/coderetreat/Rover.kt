@@ -13,13 +13,13 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
     private fun rotate(rotateCommand: RoverCommand.RotateCommand): Direction {
         return when (rotateCommand) {
             is Right -> facingDirection.rotateClockwise()
-            is Left  -> facingDirection.rotateCounterClockwise()
+            is Left -> facingDirection.rotateCounterClockwise()
         }
     }
 
     private fun move(moveCommand: RoverCommand.MoveCommand): Position {
         val stepDirection = when (moveCommand) {
-            is Forwards  -> StepDirection.UP
+            is Forwards -> StepDirection.UP
             is Backwards -> StepDirection.DOWN
         }
 
@@ -30,15 +30,20 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
             Direction.WEST -> position.stepX(stepDirection.flip())
         }
     }
+
+    fun receiveCommands(commands: List<RoverCommand>): Rover {
+        return commands.fold(this, Rover::receiveCommand)
+    }
 }
 
 
 sealed class RoverCommand {
-    sealed class MoveCommand : RoverCommand()  {
+    sealed class MoveCommand : RoverCommand() {
         object Forwards : MoveCommand()
         object Backwards : MoveCommand()
     }
-    sealed class RotateCommand : RoverCommand()  {
+
+    sealed class RotateCommand : RoverCommand() {
         object Right : RotateCommand()
         object Left : RotateCommand()
     }
