@@ -4,17 +4,20 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
                  val position: Position = Position(0, 0)) {
 
     fun receiveCommand(command: Command): Rover {
-        return if (command == Command.FORWARDS) {
-            Rover(facingDirection = this.facingDirection, position = move(command))
-        } else {
-            Rover(facingDirection = this.facingDirection, position = move(command))
+        return when (command) {
+            is Command.MoveCommand -> Rover(facingDirection = this.facingDirection, position = move(command))
+            is Command.RotateCommand -> Rover(facingDirection = rotate(command), position = this.position)
         }
     }
 
-    private fun move(moveCommand: Command): Position {
+    private fun rotate(rotateCommand: Command.RotateCommand): Direction {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    private fun move(moveCommand: Command.MoveCommand): Position {
         val stepDirection = when (moveCommand) {
-            Command.FORWARDS  -> StepDirection.UP
-            Command.BACKWARDS -> StepDirection.DOWN
+            is Forwards -> StepDirection.UP
+            is Backwards -> StepDirection.DOWN
         }
 
         return when (facingDirection) {
@@ -33,7 +36,19 @@ enum class Direction {
     WEST
 }
 
-enum class Command {
-    FORWARDS,
-    BACKWARDS
+
+sealed class Command {
+    sealed class MoveCommand : Command()  {
+        object Forwards : MoveCommand()
+        object Backwards : MoveCommand()
+    }
+    sealed class RotateCommand : Command()  {
+        object Right : RotateCommand()
+        object Left : RotateCommand()
+    }
 }
+
+typealias Forwards = Command.MoveCommand.Forwards
+typealias Backwards = Command.MoveCommand.Backwards
+typealias Right = Command.RotateCommand.Right
+typealias Left = Command.RotateCommand.Left
