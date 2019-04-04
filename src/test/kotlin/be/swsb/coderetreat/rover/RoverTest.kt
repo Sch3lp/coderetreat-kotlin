@@ -228,7 +228,7 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the Planets' top edge, upon moving backwards South, should be positioned at the Planets' bottom edge`() {
+    fun `a Rover on the Planets' top edge, upon moving backwards while facing South, should be positioned at the Planets' bottom edge`() {
         val aRover = Rover(facingDirection = Direction.SOUTH, position = Position(0,1), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Backwards)
@@ -237,7 +237,7 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the Planets' bottom edge, upon moving forwards South, should be positioned at the Planets' top edge`() {
+    fun `a Rover on the Planets' bottom edge, upon moving forwards while facing South, should be positioned at the Planets' top edge`() {
         val aRover = Rover(facingDirection = Direction.SOUTH, position = Position(0,-1), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Forwards)
@@ -246,7 +246,7 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the Planets' bottom edge, upon moving backwards North, should be positioned at the Planets' top edge`() {
+    fun `a Rover on the Planets' bottom edge, upon moving backwards while facing North, should be positioned at the Planets' top edge`() {
         val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,-1), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Backwards)
@@ -255,7 +255,7 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the Planets' right edge, upon moving forwards East, should be positioned at the Planets' left edge`() {
+    fun `a Rover on the Planets' right edge, upon moving forwards while facing East, should be positioned at the Planets' left edge`() {
         val aRover = Rover(facingDirection = Direction.EAST, position = Position(1,0), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Forwards)
@@ -264,7 +264,7 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the Planets' right edge, upon moving backwards East, should be positioned at the Planets' left edge`() {
+    fun `a Rover on the Planets' right edge, upon moving backwards while facing West, should be positioned at the Planets' left edge`() {
         val aRover = Rover(facingDirection = Direction.WEST, position = Position(1,0), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Backwards)
@@ -273,7 +273,7 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the Planets' left edge, upon moving forwards West, should be positioned at the Planets' right edge`() {
+    fun `a Rover on the Planets' left edge, upon moving forwards while facing West, should be positioned at the Planets' right edge`() {
         val aRover = Rover(facingDirection = Direction.WEST, position = Position(-1,0), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Forwards)
@@ -282,7 +282,7 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the Planets' left edge, upon moving backwards West, should be positioned at the Planets' right edge`() {
+    fun `a Rover on the Planets' left edge, upon moving backwards while facing East, should be positioned at the Planets' right edge`() {
         val aRover = Rover(facingDirection = Direction.EAST, position = Position(-1,0), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Backwards)
@@ -291,7 +291,7 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the planets' left edge, upon moving backwards East, should not wrap Planets' edge`() {
+    fun `a Rover on the planets' left edge, upon moving backwards while facing West, should not wrap Planets' edge`() {
         val aRover = Rover(facingDirection = Direction.WEST, position = Position(-1,0), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Backwards)
