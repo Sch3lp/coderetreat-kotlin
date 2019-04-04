@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import be.swsb.coderetreat.planet.Dimension
 import be.swsb.coderetreat.planet.Planet
+import org.junit.Ignore
 import org.junit.Test
 
 class RoverTest {
@@ -219,13 +220,46 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the Planets' top edge, upon moving North, should be positioned at the Planets' bottom edge`() {
+    fun `a Rover on the Planets' top edge, upon moving forwards North, should be positioned at the Planets' bottom edge`() {
         val theMoon = Planet(Dimension(3,3))
 
         val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,1), planet = theMoon)
 
         val movedRover = aRover.receiveCommand(Forwards)
 
-        assertThat(movedRover).isEqualTo(Rover(planet = theMoon, position = Position(0, -1)))
+        assertThat(movedRover.position).isEqualTo(Position(0, -1))
+    }
+
+    @Test
+    fun `a Rover on the Planets' top edge, upon moving backwards South, should be positioned at the Planets' bottom edge`() {
+        val theMoon = Planet(Dimension(3,3))
+
+        val aRover = Rover(facingDirection = Direction.SOUTH, position = Position(0,1), planet = theMoon)
+
+        val movedRover = aRover.receiveCommand(Backwards)
+
+        assertThat(movedRover.position).isEqualTo(Position(0, -1))
+    }
+
+    @Test
+    fun `a Rover on the Planets' bottom edge, upon moving forwards South, should be positioned at the Planets' top edge`() {
+        val theMoon = Planet(Dimension(3,3))
+
+        val aRover = Rover(facingDirection = Direction.SOUTH, position = Position(0,-1), planet = theMoon)
+
+        val movedRover = aRover.receiveCommand(Forwards)
+
+        assertThat(movedRover.position).isEqualTo(Position(0, 1))
+    }
+
+    @Test
+    fun `a Rover on the Planets' bottom edge, upon moving backwards North, should be positioned at the Planets' top edge`() {
+        val theMoon = Planet(Dimension(3,3))
+
+        val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,-1), planet = theMoon)
+
+        val movedRover = aRover.receiveCommand(Backwards)
+
+        assertThat(movedRover.position).isEqualTo(Position(0, 1))
     }
 }
