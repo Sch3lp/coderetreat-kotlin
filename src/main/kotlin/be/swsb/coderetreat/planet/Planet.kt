@@ -15,25 +15,54 @@ sealed class Planet(private val dimension: Dimension) {
     }
 
     fun wrapWhenCrossingEdge(position: Position, movingDirection: MovingDirection): Position? {
-        return if (inTopEdge(position) && movingDirection == Direction.NORTH) position.flipY()
-        else if (inBottomEdge(position) && movingDirection == Direction.SOUTH) position.flipY()
-        else if (inRightEdge(position) && movingDirection == Direction.EAST) position.flipX()
-        else if (inLeftEdge(position) && movingDirection == Direction.WEST) position.flipX()
+        throwExceptionWhenOutOfBounds(position)
+        return if (onTopEdge(position) && movingDirection == Direction.NORTH) position.flipY()
+        else if (onBottomEdge(position) && movingDirection == Direction.SOUTH) position.flipY()
+        else if (onRightEdge(position) && movingDirection == Direction.EAST) position.flipX()
+        else if (onLeftEdge(position) && movingDirection == Direction.WEST) position.flipX()
         else null
     }
 
-    private fun inLeftEdge(position: Position) =
-            dimension.width.div(2) == position.x.absoluteValue && position.x < 0
+    private fun throwExceptionWhenOutOfBounds(position: Position) {
+        if (outsideTopEdge(position) || outsideBottomEdge(position) || outsideLeftEdge(position) || outsideRightEdge(position))
+            throw OutOfBoundsException()
+    }
 
-    private fun inRightEdge(position: Position) =
-            dimension.width.div(2) == position.x.absoluteValue && position.x >= 0
+    private fun outsideTopEdge(position: Position): Boolean {
+        return position.y > topEdge()
+    }
 
-    private fun inBottomEdge(position: Position) =
-            dimension.height.div(2) == position.y.absoluteValue && position.y < 0
+    private fun outsideBottomEdge(position: Position): Boolean {
+        return position.y < bottomEdge()
+    }
 
-    private fun inTopEdge(position: Position) =
-            dimension.height.div(2) == position.y.absoluteValue && position.y >= 0
+    private fun outsideRightEdge(position: Position): Boolean {
+        return position.x > rightEdge()
+    }
+
+    private fun outsideLeftEdge(position: Position): Boolean {
+        return position.x < leftEdge()
+    }
+
+    private fun onTopEdge(position: Position) =
+            topEdge() == position.y
+
+    private fun onBottomEdge(position: Position) =
+            bottomEdge() == position.y
+
+    private fun onRightEdge(position: Position) =
+            rightEdge() == position.x
+
+    private fun onLeftEdge(position: Position) =
+            leftEdge() == position.x
+
+    private fun topEdge() = dimension.height.div(2)
+    private fun bottomEdge() = (dimension.height.div(2) * -1)
+    private fun rightEdge() = dimension.width.div(2)
+    private fun leftEdge() = (dimension.width.div(2) * -1)
 }
 
 typealias Mars = Planet.Mars
 typealias Moon = Planet.Moon
+
+class OutOfBoundsException: Exception("Out of bounds!")

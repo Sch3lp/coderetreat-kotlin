@@ -1,9 +1,7 @@
 package be.swsb.coderetreat.planet
 
 import assertk.assertThat
-import assertk.assertions.isEqualTo
-import assertk.assertions.isFalse
-import assertk.assertions.isTrue
+import assertk.assertions.*
 import be.swsb.coderetreat.rover.MovingDirection
 import be.swsb.coderetreat.rover.Position
 import org.junit.Test
@@ -72,5 +70,14 @@ class PlanetTest {
         assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(-1, 0), MovingDirection.WEST)) .isEqualTo(Position(-1, 0).flipX())
         assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(-1, -1), MovingDirection.WEST)) .isEqualTo(Position(-1, -1).flipX())
     }
+
+    @Test
+    fun `wrapWhenCrossingEdge, given any position outside the Planet's boundaries, throws exception`() {
+        val `3x3 Planet` = Moon
+
+        assertThat { `3x3 Planet`.wrapWhenCrossingEdge(Position(100,100), MovingDirection.EAST) }
+                .thrownError { hasMessage("Out of bounds!"); isInstanceOf(OutOfBoundsException::class) }
+    }
+
 }
 
