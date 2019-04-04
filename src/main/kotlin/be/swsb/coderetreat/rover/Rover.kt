@@ -38,33 +38,12 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
         }
 
         //check if newPosition exceeds the planet's edge, and flip either x or y
-        val wrappedPosition = wrapPositionIfNecessary(newPosition)
+        val wrappedPosition = wrapPositionIfNecessary(newPosition, movingDirection)
         return debug(Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet))
     }
 
-    private fun wrapPositionIfNecessary(newPosition: Position): Position {
-        return when (facingDirection) {
-            Direction.NORTH -> flipYWhenOnEdge(newPosition)
-            Direction.SOUTH -> flipYWhenOnEdge(newPosition)
-            Direction.EAST -> flipXWhenOnEdge(newPosition)
-            Direction.WEST -> flipXWhenOnEdge(newPosition)
-        }
-    }
-
-    private fun flipXWhenOnEdge(newPosition: Position): Position {
-        return if (planet.isAnEdge(position)) {
-            position.flipX()
-        } else {
-            newPosition
-        }
-    }
-
-    private fun flipYWhenOnEdge(newPosition: Position): Position {
-        return if (planet.isAnEdge(position)) {
-            position.flipY()
-        } else {
-            newPosition
-        }
+    private fun wrapPositionIfNecessary(newPosition: Position, movingDirection: MovingDirection): Position {
+        return planet.wrapWhenCrossingEdge(position, movingDirection) ?: newPosition
     }
 
     private fun rotate(rotateCommand: RoverCommand.RotateCommand): Rover {
@@ -76,7 +55,7 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
     }
 
     private fun <T> debug(any: T): T {
-        println(any)
+//        println(any)
         return any
     }
 }

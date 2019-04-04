@@ -4,6 +4,7 @@ import assertk.assertThat
 import assertk.assertions.isEqualTo
 import assertk.assertions.isFalse
 import assertk.assertions.isTrue
+import be.swsb.coderetreat.rover.MovingDirection
 import be.swsb.coderetreat.rover.Position
 import org.junit.Test
 
@@ -37,39 +38,39 @@ class PlanetTest {
     }
 
     @Test
-    fun `edge, given any position in the top edge, returns the top edge`() {
+    fun `wrapWhenCrossingEdge, given any position in the top edge when moving North, returns position in bottom edge`() {
         val `3x3 Planet` = Moon
 
-        assertThat(`3x3 Planet`.edge(Position(-1, 1))).isEqualTo(TopEdge)
-        assertThat(`3x3 Planet`.edge(Position(0, 1))) .isEqualTo(TopEdge)
-        assertThat(`3x3 Planet`.edge(Position(1, 1))) .isEqualTo(TopEdge)
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(-1, 1), MovingDirection.NORTH)).isEqualTo(Position(-1, 1).flipY())
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(0, 1), MovingDirection.NORTH)) .isEqualTo(Position(0, 1).flipY())
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(1, 1), MovingDirection.NORTH)) .isEqualTo(Position(1, 1).flipY())
     }
 
     @Test
-    fun `edge, given any position in the bottom edge, returns the bottom edge`() {
+    fun `wrapWhenCrossingEdge, given any position in the bottom edge when moving South, returns position in top edge`() {
         val `3x3 Planet` = Moon
 
-        assertThat(`3x3 Planet`.edge(Position(-1, -1))).isEqualTo(BottomEdge)
-        assertThat(`3x3 Planet`.edge(Position(0, -1))) .isEqualTo(BottomEdge)
-        assertThat(`3x3 Planet`.edge(Position(1, -1))) .isEqualTo(BottomEdge)
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(-1, -1), MovingDirection.SOUTH)).isEqualTo(Position(-1, -1).flipY())
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(0, -1),  MovingDirection.SOUTH)).isEqualTo(Position(0, -1).flipY())
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(1, -1),  MovingDirection.SOUTH)).isEqualTo(Position(1, -1).flipY())
     }
 
     @Test
-    fun `edge, given any position in the right edge, returns the right edge`() {
+    fun `wrapWhenCrossingEdge, given any position in the right edge when moving East, returns position in left edge`() {
         val `3x3 Planet` = Moon
 
-        assertThat(`3x3 Planet`.edge(Position(1, 1))).isEqualTo(RightEdge)
-        assertThat(`3x3 Planet`.edge(Position(1, 0))) .isEqualTo(RightEdge)
-        assertThat(`3x3 Planet`.edge(Position(1, -1))) .isEqualTo(RightEdge)
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(1, 1), MovingDirection.EAST)).isEqualTo(Position(1, 1).flipX())
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(1, 0), MovingDirection.EAST)) .isEqualTo(Position(1, 0).flipX())
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(1, -1), MovingDirection.EAST)) .isEqualTo(Position(1, -1).flipX())
     }
 
     @Test
-    fun `edge, given any position in the left edge, returns the left edge`() {
+    fun `wrapWhenCrossingEdge, given any position in the left edge when moving West, returns position in right edge`() {
         val `3x3 Planet` = Moon
 
-        assertThat(`3x3 Planet`.edge(Position(-1, 1))).isEqualTo(LeftEdge)
-        assertThat(`3x3 Planet`.edge(Position(-1, 0))) .isEqualTo(LeftEdge)
-        assertThat(`3x3 Planet`.edge(Position(-1, -1))) .isEqualTo(LeftEdge)
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(-1, 1), MovingDirection.WEST)).isEqualTo(Position(-1, 1).flipX())
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(-1, 0), MovingDirection.WEST)) .isEqualTo(Position(-1, 0).flipX())
+        assertThat(`3x3 Planet`.wrapWhenCrossingEdge(Position(-1, -1), MovingDirection.WEST)) .isEqualTo(Position(-1, -1).flipX())
     }
 }
 
