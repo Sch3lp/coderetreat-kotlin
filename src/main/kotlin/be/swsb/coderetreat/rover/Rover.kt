@@ -25,19 +25,40 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
 
         val newPosition = when (facingDirection) {
             Direction.NORTH -> position.stepY(stepDirection)
-            Direction.EAST -> position.stepX(stepDirection)
             Direction.SOUTH -> position.stepY(stepDirection.flip())
-            Direction.WEST -> position.stepX(stepDirection.flip())
+            Direction.EAST  -> position.stepX(stepDirection)
+            Direction.WEST  -> position.stepX(stepDirection.flip())
         }
 
         //check if newPosition exceeds the planet's edge, and flip either x or y
-        val wrappedPosition = if (planet.isAnEdge(position)) {
+        val wrappedPosition = wrapPositionIfNecessary(newPosition)
+
+        return Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet)
+    }
+
+    private fun wrapPositionIfNecessary(newPosition: Position): Position {
+        return when (facingDirection) {
+            Direction.NORTH -> flipYWhenOnEdge(newPosition)
+            Direction.SOUTH -> flipYWhenOnEdge(newPosition)
+            Direction.EAST  -> flipXWhenOnEdge(newPosition)
+            Direction.WEST  -> flipXWhenOnEdge(newPosition)
+        }
+    }
+
+    private fun flipXWhenOnEdge(newPosition: Position): Position {
+        return if (planet.isAnEdge(position)) {
+            position.flipX()
+        } else {
+            newPosition
+        }
+    }
+
+    private fun flipYWhenOnEdge(newPosition: Position): Position {
+        return if (planet.isAnEdge(position)) {
             position.flipY()
         } else {
             newPosition
         }
-
-        return Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet)
     }
 
     private fun rotate(rotateCommand: RoverCommand.RotateCommand): Rover {
@@ -48,7 +69,6 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
         return Rover(facingDirection = newDirection, position = position, planet = planet)
     }
 }
-
 
 sealed class RoverCommand {
     sealed class MoveCommand : RoverCommand() {
