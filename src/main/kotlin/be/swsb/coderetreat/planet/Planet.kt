@@ -3,16 +3,10 @@ package be.swsb.coderetreat.planet
 import be.swsb.coderetreat.rover.Direction
 import be.swsb.coderetreat.rover.MovingDirection
 import be.swsb.coderetreat.rover.Position
-import kotlin.math.absoluteValue
 
 sealed class Planet(private val dimension: Dimension) {
     object Mars : Planet(`5x5`())
     object Moon : Planet(`3x3`())
-
-    fun isAnEdge(position: Position): Boolean {
-        return dimension.height.div(2) == position.y.absoluteValue
-                || dimension.width.div(2) == position.x.absoluteValue
-    }
 
     fun wrapWhenCrossingEdge(position: Position, movingDirection: MovingDirection): Position? {
         throwExceptionWhenOutOfBounds(position)
