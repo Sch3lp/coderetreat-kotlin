@@ -1,4 +1,4 @@
-package be.swsb.coderetreat
+package be.swsb.coderetreat.rover
 
 data class Position(val x: Int, val y: Int) {
     fun stepY(direction: StepDirection): Position {

@@ -1,7 +1,8 @@
-package be.swsb.coderetreat
+package be.swsb.coderetreat.rover
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import be.swsb.coderetreat.rover.Direction
 import org.junit.Test
 
 class DirectionTest {

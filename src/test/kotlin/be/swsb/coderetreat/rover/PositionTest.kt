@@ -1,7 +1,9 @@
-package be.swsb.coderetreat
+package be.swsb.coderetreat.rover
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import be.swsb.coderetreat.rover.Position
+import be.swsb.coderetreat.rover.StepDirection
 import org.junit.Test
 
 class PositionTest {
