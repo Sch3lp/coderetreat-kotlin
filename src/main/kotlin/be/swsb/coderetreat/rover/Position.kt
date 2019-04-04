@@ -14,6 +14,14 @@ data class Position(val x: Int, val y: Int) {
             StepDirection.DOWN -> Position(x - 1, y)
         }
     }
+
+    fun flipY(): Position {
+        return Position(this.x, this.y * -1)
+    }
+
+    fun flipX(): Position {
+        return Position(this.x * -1, this.y)
+    }
 }
 
 enum class StepDirection {
