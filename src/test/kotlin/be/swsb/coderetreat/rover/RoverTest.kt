@@ -2,6 +2,7 @@ package be.swsb.coderetreat.rover
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import be.swsb.coderetreat.planet.Planet
 import be.swsb.coderetreat.rover.*
 import org.junit.Test
 
@@ -19,6 +20,13 @@ class RoverTest {
         val defaultRover = Rover()
 
         assertThat(defaultRover.position).isEqualTo(Position(0, 0))
+    }
+
+    @Test
+    fun aDefaultRoverShouldBeOnThePlanetMars() {
+        val defaultRover = Rover()
+
+        assertThat(defaultRover.planet).isEqualTo(Planet.mars())
     }
 
     @Test

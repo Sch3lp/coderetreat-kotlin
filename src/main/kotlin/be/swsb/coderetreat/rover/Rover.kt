@@ -1,7 +1,10 @@
 package be.swsb.coderetreat.rover
 
+import be.swsb.coderetreat.planet.Planet
+
 data class Rover(val facingDirection: Direction = Direction.NORTH,
-                 val position: Position = Position(0, 0)) {
+                 val position: Position = Position(0, 0),
+                 val planet: Planet = Planet.mars()) {
 
     fun receiveCommands(commands: List<RoverCommand>): Rover {
         return commands.fold(this, Rover::receiveCommand)
