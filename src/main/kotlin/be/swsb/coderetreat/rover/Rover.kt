@@ -13,22 +13,28 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
 
     fun receiveCommand(command: RoverCommand): Rover {
         return when (command) {
-            is RoverCommand.MoveCommand   -> move(debug(command))
+            is RoverCommand.MoveCommand -> move(debug(command))
             is RoverCommand.RotateCommand -> rotate(debug(command))
         }
     }
 
+    // 2nd Refactor task:
+    // Pass MovingDirection to an Edge (new sealed class) to either wrap or not
     private fun move(moveCommand: RoverCommand.MoveCommand): Rover {
-        val stepDirection = when (moveCommand) {
-            is Forwards -> StepDirection.UP
-            is Backwards -> StepDirection.DOWN
+        val movingDirection = movingDirection(moveCommand, facingDirection)
+
+        val stepDirection = when (movingDirection) {
+            Direction.NORTH -> StepDirection.UP
+            Direction.SOUTH -> StepDirection.DOWN
+            Direction.EAST -> StepDirection.UP
+            Direction.WEST -> StepDirection.DOWN
         }
 
-        val newPosition = when (facingDirection) {
+        val newPosition = when (movingDirection) {
             Direction.NORTH -> position.stepY(stepDirection)
-            Direction.SOUTH -> position.stepY(stepDirection.flip())
-            Direction.EAST  -> position.stepX(stepDirection)
-            Direction.WEST  -> position.stepX(stepDirection.flip())
+            Direction.EAST -> position.stepX(stepDirection)
+            Direction.SOUTH -> position.stepY(stepDirection)
+            Direction.WEST -> position.stepX(stepDirection)
         }
 
         //check if newPosition exceeds the planet's edge, and flip either x or y
@@ -36,12 +42,20 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
         return debug(Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet))
     }
 
+    private fun movingDirection(moveCommand: RoverCommand.MoveCommand, facingDirection: Direction): MovingDirection {
+        return if (moveCommand is Backwards) {
+            facingDirection.flip()
+        } else {
+            facingDirection
+        }
+    }
+
     private fun wrapPositionIfNecessary(newPosition: Position): Position {
         return when (facingDirection) {
             Direction.NORTH -> flipYWhenOnEdge(newPosition)
             Direction.SOUTH -> flipYWhenOnEdge(newPosition)
-            Direction.EAST  -> flipXWhenOnEdge(newPosition)
-            Direction.WEST  -> flipXWhenOnEdge(newPosition)
+            Direction.EAST -> flipXWhenOnEdge(newPosition)
+            Direction.WEST -> flipXWhenOnEdge(newPosition)
         }
     }
 
@@ -64,7 +78,7 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
     private fun rotate(rotateCommand: RoverCommand.RotateCommand): Rover {
         val newDirection = when (rotateCommand) {
             is Right -> facingDirection.rotateClockwise()
-            is Left  -> facingDirection.rotateCounterClockwise()
+            is Left -> facingDirection.rotateCounterClockwise()
         }
         return debug(Rover(facingDirection = newDirection, position = position, planet = planet))
     }

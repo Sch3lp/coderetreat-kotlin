@@ -27,11 +27,4 @@ data class Position(val x: Int, val y: Int) {
 enum class StepDirection {
     UP,
     DOWN;
-
-    fun flip(): StepDirection {
-        return when(this) {
-            UP -> DOWN
-            DOWN -> UP
-        }
-    }
 }

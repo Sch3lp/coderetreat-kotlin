@@ -22,4 +22,12 @@ class DirectionTest {
         assertThat(Direction.SOUTH.rotateCounterClockwise()).isEqualTo(Direction.EAST)
         assertThat(Direction.EAST.rotateCounterClockwise()).isEqualTo(Direction.NORTH)
     }
+
+    @Test
+    fun flip() {
+        assertThat(Direction.NORTH.flip()).isEqualTo(Direction.SOUTH)
+        assertThat(Direction.WEST.flip()).isEqualTo(Direction.EAST)
+        assertThat(Direction.SOUTH.flip()).isEqualTo(Direction.NORTH)
+        assertThat(Direction.EAST.flip()).isEqualTo(Direction.WEST)
+    }
 }

@@ -23,4 +23,15 @@ enum class Direction {
             EAST -> NORTH
         }
     }
+
+    fun flip(): Direction {
+        return when(this) {
+            NORTH -> SOUTH
+            SOUTH -> NORTH
+            EAST -> WEST
+            WEST -> EAST
+        }
+    }
 }
+
+typealias MovingDirection = Direction

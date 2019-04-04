@@ -289,4 +289,13 @@ class RoverTest {
 
         assertThat(movedRover.position).isEqualTo(Position(1, 0))
     }
+
+    @Test
+    fun `a Rover on the planets' left edge, upon moving backwards East, should not wrap Planets' edge`() {
+        val aRover = Rover(facingDirection = Direction.WEST, position = Position(-1,0), planet = Moon)
+
+        val movedRover = aRover.receiveCommand(Backwards)
+
+        assertThat(movedRover.position).isEqualTo(Position(0, 0))
+    }
 }

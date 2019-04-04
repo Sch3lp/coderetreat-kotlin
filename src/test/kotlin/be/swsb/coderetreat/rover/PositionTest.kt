@@ -44,12 +44,6 @@ class PositionTest {
     }
 
     @Test
-    fun flipStepDirection_UpBecomesDownAndViceVersa() {
-        assertThat(StepDirection.UP.flip()).isEqualTo(StepDirection.DOWN)
-        assertThat(StepDirection.DOWN.flip()).isEqualTo(StepDirection.UP)
-    }
-
-    @Test
     fun flipY_ReturnsNewPositionWithNegatedY() {
         val positiveY = Position(71263931,567).flipY()
         assertThat(positiveY).isEqualTo(Position(71263931, -567))
