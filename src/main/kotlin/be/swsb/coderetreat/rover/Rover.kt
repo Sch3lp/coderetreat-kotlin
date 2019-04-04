@@ -31,16 +31,21 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
         }
 
         //check if newPosition exceeds the planet's edge, and flip either x or y
+        val wrappedPosition = if (planet.isAnEdge(position)) {
+            position.flipY()
+        } else {
+            newPosition
+        }
 
-        return Rover(facingDirection = this.facingDirection, position = newPosition)
+        return Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet)
     }
 
     private fun rotate(rotateCommand: RoverCommand.RotateCommand): Rover {
         val newDirection = when (rotateCommand) {
             is Right -> facingDirection.rotateClockwise()
-            is Left -> facingDirection.rotateCounterClockwise()
+            is Left  -> facingDirection.rotateCounterClockwise()
         }
-        return Rover(facingDirection = newDirection, position = this.position)
+        return Rover(facingDirection = newDirection, position = position, planet = planet)
     }
 }
 

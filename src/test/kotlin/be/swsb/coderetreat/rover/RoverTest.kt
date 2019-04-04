@@ -2,8 +2,8 @@ package be.swsb.coderetreat.rover
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import be.swsb.coderetreat.planet.Dimension
 import be.swsb.coderetreat.planet.Planet
-import be.swsb.coderetreat.rover.*
 import org.junit.Test
 
 class RoverTest {
@@ -20,6 +20,24 @@ class RoverTest {
         val defaultRover = Rover()
 
         assertThat(defaultRover.position).isEqualTo(Position(0, 0))
+    }
+
+    @Test
+    fun `a Rover on the moon, when rotating, should stay on the moon`() {
+        val aRover = Rover(planet = Planet.moon())
+
+        val actual = aRover.receiveCommand(Left)
+
+        assertThat(actual.planet).isEqualTo(Planet.moon())
+    }
+
+    @Test
+    fun `a Rover on the moon, when moving, should stay on the moon`() {
+        val aRover = Rover(planet = Planet.moon())
+
+        val actual = aRover.receiveCommand(Forwards)
+
+        assertThat(actual.planet).isEqualTo(Planet.moon())
     }
 
     @Test
@@ -198,5 +216,16 @@ class RoverTest {
         val rotatedRover = aRover.receiveCommand(Left).receiveCommand(Left).receiveCommand(Left).receiveCommand(Left)
 
         assertThat(rotatedRover).isEqualTo(Rover(facingDirection = Direction.NORTH, position = aRover.position))
+    }
+
+    @Test
+    fun aRoverOnThePlanetsTopEdge_UponMovingNorth_ShouldBePositionedAtThePlanetsBottomEdge() {
+        val theMoon = Planet(Dimension(3,3))
+
+        val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,1), planet = theMoon)
+
+        val movedRover = aRover.receiveCommand(Forwards)
+
+        assertThat(movedRover).isEqualTo(Rover(planet = theMoon, position = Position(0, -1)))
     }
 }

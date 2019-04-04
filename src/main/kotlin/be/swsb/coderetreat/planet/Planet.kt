@@ -6,7 +6,11 @@ import kotlin.math.absoluteValue
 data class Planet(val dimension: Dimension) {
     companion object {
         fun mars(): Planet {
-            return Planet(`4x4`())
+            return Planet(`5x5`())
+        }
+
+        fun moon(): Planet {
+            return Planet(`3x3`())
         }
     }
 
