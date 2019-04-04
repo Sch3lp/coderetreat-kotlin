@@ -15,12 +15,24 @@ sealed class Planet(private val dimension: Dimension) {
     }
 
     fun wrapWhenCrossingEdge(position: Position, movingDirection: MovingDirection): Position? {
-        return if (dimension.height.div(2) == position.y.absoluteValue && position.y >= 0 && movingDirection == Direction.NORTH) position.flipY()
-        else if (dimension.height.div(2) == position.y.absoluteValue && position.y < 0 && movingDirection == Direction.SOUTH) position.flipY()
-        else if (dimension.width.div(2) == position.x.absoluteValue && position.x >= 0 && movingDirection == Direction.EAST) position.flipX()
-        else if (dimension.width.div(2) == position.x.absoluteValue && position.x < 0 && movingDirection == Direction.WEST) position.flipX()
+        return if (inTopEdge(position) && movingDirection == Direction.NORTH) position.flipY()
+        else if (inBottomEdge(position) && movingDirection == Direction.SOUTH) position.flipY()
+        else if (inRightEdge(position) && movingDirection == Direction.EAST) position.flipX()
+        else if (inLeftEdge(position) && movingDirection == Direction.WEST) position.flipX()
         else null
     }
+
+    private fun inLeftEdge(position: Position) =
+            dimension.width.div(2) == position.x.absoluteValue && position.x < 0
+
+    private fun inRightEdge(position: Position) =
+            dimension.width.div(2) == position.x.absoluteValue && position.x >= 0
+
+    private fun inBottomEdge(position: Position) =
+            dimension.height.div(2) == position.y.absoluteValue && position.y < 0
+
+    private fun inTopEdge(position: Position) =
+            dimension.height.div(2) == position.y.absoluteValue && position.y >= 0
 }
 
 typealias Mars = Planet.Mars
