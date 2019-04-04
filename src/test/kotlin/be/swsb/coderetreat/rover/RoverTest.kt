@@ -9,14 +9,14 @@ import org.junit.Test
 class RoverTest {
 
     @Test
-    fun aDefaultRoverShouldBeFacingNorth() {
+    fun `a default Rover should be facing North`() {
         val defaultRover = Rover()
 
         assertThat(defaultRover.facingDirection).isEqualTo(Direction.NORTH)
     }
 
     @Test
-    fun aDefaultRoverShouldBePositionedAt00() {
+    fun `a default Rover should be positioned at (0,0)`() {
         val defaultRover = Rover()
 
         assertThat(defaultRover.position).isEqualTo(Position(0, 0))
@@ -41,14 +41,14 @@ class RoverTest {
     }
 
     @Test
-    fun aDefaultRoverShouldBeOnThePlanetMars() {
+    fun `a default Rover should be on the planet Mars`() {
         val defaultRover = Rover()
 
         assertThat(defaultRover.planet).isEqualTo(Planet.mars())
     }
 
     @Test
-    fun aRoverFacingNorth_UponReceivingForwards_ShouldMove1PositionNorth() {
+    fun `a Rover facing North, upon receiving forwards should move 1 position North`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
         val movedRover = aRover.receiveCommand(Forwards)
@@ -57,7 +57,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingEast_UponReceivingForwards_ShouldMove1PositionEast() {
+    fun `a Rover facing East, upon receiving forwards should move 1 position East`() {
         val aRover = Rover(facingDirection = Direction.EAST)
 
         val movedRover = aRover.receiveCommand(Forwards)
@@ -66,7 +66,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingSouth_UponReceivingForwards_ShouldMove1PositionSouth() {
+    fun `a Rover facing South, upon receiving forwards should move 1 position South`() {
         val aRover = Rover(facingDirection = Direction.SOUTH)
 
         val movedRover = aRover.receiveCommand(Forwards)
@@ -75,7 +75,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingWest_UponReceivingForwards_ShouldMove1PositionWest() {
+    fun `a Rover facing West, upon receiving forwards should move 1 position West`() {
         val aRover = Rover(facingDirection = Direction.WEST)
 
         val movedRover = aRover.receiveCommand(Forwards)
@@ -84,7 +84,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingNorth_UponReceivingForwardsTwice_ShouldMove2PositionsNorth() {
+    fun `a Rover facing North, upon receiving forwards twice, should move 2 positions North`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
         val movedRover = aRover.receiveCommand(Forwards).receiveCommand(Forwards)
@@ -93,7 +93,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingEast_UponReceivingForwardsTwice_ShouldMove2PositionsEast() {
+    fun `a Rover facing East, upon receiving forwards twice, should move 2 positions East`() {
         val aRover = Rover(facingDirection = Direction.EAST)
 
         val movedRover = aRover.receiveCommand(Forwards).receiveCommand(Forwards)
@@ -102,7 +102,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingSouth_UponReceivingForwardsTwice_ShouldMove2PositionsSouth() {
+    fun `a Rover facing South, upon receiving forwards twice, should move 2 positions South`() {
         val aRover = Rover(facingDirection = Direction.SOUTH)
 
         val movedRover = aRover.receiveCommand(Forwards).receiveCommand(Forwards)
@@ -111,7 +111,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingWest_UponReceivingForwardsTwice_ShouldMove2PositionsWest() {
+    fun `a Rover facing West, upon receiving forwards twice, should move 2 positions West`() {
         val aRover = Rover(facingDirection = Direction.WEST)
 
         val movedRover = aRover.receiveCommand(Forwards).receiveCommand(Forwards)
@@ -120,7 +120,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingNorth_UponReceivingBackwards_ShouldMove1PositionSouth() {
+    fun `a Rover facing North, upon receiving backwards should move 1 position South`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
         val movedRover = aRover.receiveCommand(Backwards)
@@ -129,7 +129,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingEast_UponReceivingBackwards_ShouldMove1PositionWest() {
+    fun `a Rover facing East, upon receiving backwards should move 1 position West`() {
         val aRover = Rover(facingDirection = Direction.EAST)
 
         val movedRover = aRover.receiveCommand(Backwards)
@@ -138,7 +138,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingSouth_UponReceivingBackwards_ShouldMove1PositionNorth() {
+    fun `a Rover facing South, upon receiving backwards should move 1 position North`() {
         val aRover = Rover(facingDirection = Direction.SOUTH)
 
         val movedRover = aRover.receiveCommand(Backwards)
@@ -147,7 +147,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingWest_UponReceivingBackwards_ShouldMove1PositionEast() {
+    fun `a Rover facing West, upon receiving backwards should move 1 position East`() {
         val aRover = Rover(facingDirection = Direction.WEST)
 
         val movedRover = aRover.receiveCommand(Backwards)
@@ -156,7 +156,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingNorth_UponReceivingBackwardsTwice_ShouldMove2PositionsSouth() {
+    fun `a Rover facing North, upon receiving backwards twice, should move 2 positions South`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
         val movedRover = aRover.receiveCommand(Backwards).receiveCommand(Backwards)
@@ -165,7 +165,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingEast_UponReceivingBackwardsTwice_ShouldMove2PositionsWest() {
+    fun `a Rover facing East, upon receiving backwards twice, should move 2 positions West`() {
         val aRover = Rover(facingDirection = Direction.EAST)
 
         val movedRover = aRover.receiveCommand(Backwards).receiveCommand(Backwards)
@@ -174,7 +174,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingSouth_UponReceivingBackwardsTwice_ShouldMove2PositionsNorth() {
+    fun `a Rover facing South, upon receiving backwards twice, should move 2 positions North`() {
         val aRover = Rover(facingDirection = Direction.SOUTH)
 
         val movedRover = aRover.receiveCommand(Backwards).receiveCommand(Backwards)
@@ -183,7 +183,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingWest_UponReceivingBackwardsTwice_ShouldMove2PositionsEast() {
+    fun `a Rover facing West, upon receiving backwards twice, should move 2 positions East`() {
         val aRover = Rover(facingDirection = Direction.WEST)
 
         val movedRover = aRover.receiveCommand(Backwards).receiveCommand(Backwards)
@@ -192,7 +192,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingNorth_UponReceivingRight_RotatesToEast() {
+    fun `a Rover facing North, upon receiving right, rotates to East`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
         val rotatedRover = aRover.receiveCommand(Right)
@@ -201,7 +201,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingNorth_UponReceivingRight4Times_RotatesBackToNorth() {
+    fun `a Rover facing North, upon receiving right 4 times, rotates back to North`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
         val rotatedRover = aRover.receiveCommand(Right).receiveCommand(Right).receiveCommand(Right).receiveCommand(Right)
@@ -210,7 +210,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverFacingNorth_UponReceivingLeft4Times_RotatesBackToNorth() {
+    fun `a Rover facing North, upon receiving left 4 times, rotates back to North`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
         val rotatedRover = aRover.receiveCommand(Left).receiveCommand(Left).receiveCommand(Left).receiveCommand(Left)
@@ -219,7 +219,7 @@ class RoverTest {
     }
 
     @Test
-    fun aRoverOnThePlanetsTopEdge_UponMovingNorth_ShouldBePositionedAtThePlanetsBottomEdge() {
+    fun `a Rover on the Planets' top edge, upon moving North, should be positioned at the Planets' bottom edge`() {
         val theMoon = Planet(Dimension(3,3))
 
         val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,1), planet = theMoon)
