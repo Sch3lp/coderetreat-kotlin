@@ -21,7 +21,7 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
     // 2nd Refactor task:
     // Pass MovingDirection to an Edge (new sealed class) to either wrap or not
     private fun move(moveCommand: RoverCommand.MoveCommand): Rover {
-        val movingDirection = movingDirection(moveCommand, facingDirection)
+        val movingDirection = moveCommand.movingDirection(facingDirection)
 
         val stepDirection = when (movingDirection) {
             Direction.NORTH -> StepDirection.UP
@@ -40,14 +40,6 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
         //check if newPosition exceeds the planet's edge, and flip either x or y
         val wrappedPosition = wrapPositionIfNecessary(newPosition)
         return debug(Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet))
-    }
-
-    private fun movingDirection(moveCommand: RoverCommand.MoveCommand, facingDirection: Direction): MovingDirection {
-        return if (moveCommand is Backwards) {
-            facingDirection.flip()
-        } else {
-            facingDirection
-        }
     }
 
     private fun wrapPositionIfNecessary(newPosition: Position): Position {
@@ -93,6 +85,13 @@ sealed class RoverCommand {
     sealed class MoveCommand : RoverCommand() {
         object Forwards : MoveCommand()
         object Backwards : MoveCommand()
+
+        fun movingDirection(facingDirection: Direction): MovingDirection {
+            return when(this) {
+                is be.swsb.coderetreat.rover.Forwards -> facingDirection
+                is be.swsb.coderetreat.rover.Backwards -> facingDirection.flip()
+            }
+        }
     }
 
     sealed class RotateCommand : RoverCommand() {
