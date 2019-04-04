@@ -23,23 +23,20 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
     private fun move(moveCommand: RoverCommand.MoveCommand): Rover {
         val movingDirection = moveCommand.movingDirection(facingDirection)
 
-        val stepDirection = when (movingDirection) {
-            Direction.NORTH -> StepDirection.UP
-            Direction.SOUTH -> StepDirection.DOWN
-            Direction.EAST -> StepDirection.UP
-            Direction.WEST -> StepDirection.DOWN
-        }
-
-        val newPosition = when (movingDirection) {
-            Direction.NORTH -> position.stepY(stepDirection)
-            Direction.EAST -> position.stepX(stepDirection)
-            Direction.SOUTH -> position.stepY(stepDirection)
-            Direction.WEST -> position.stepX(stepDirection)
-        }
+        val newPosition = moveToNewPosition(movingDirection)
 
         //check if newPosition exceeds the planet's edge, and flip either x or y
         val wrappedPosition = wrapPositionIfNecessary(newPosition, movingDirection)
         return debug(Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet))
+    }
+
+    private fun moveToNewPosition(movingDirection: MovingDirection): Position {
+        return when (movingDirection) {
+            Direction.NORTH -> position.stepY(StepDirection.UP)
+            Direction.EAST -> position.stepX(StepDirection.UP)
+            Direction.SOUTH -> position.stepY(StepDirection.DOWN)
+            Direction.WEST -> position.stepX(StepDirection.DOWN)
+        }
     }
 
     private fun wrapPositionIfNecessary(newPosition: Position, movingDirection: MovingDirection): Position {
