@@ -2,9 +2,8 @@ package be.swsb.coderetreat.rover
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
-import be.swsb.coderetreat.planet.Dimension
-import be.swsb.coderetreat.planet.Planet
-import org.junit.Ignore
+import be.swsb.coderetreat.planet.Mars
+import be.swsb.coderetreat.planet.Moon
 import org.junit.Test
 
 class RoverTest {
@@ -25,27 +24,27 @@ class RoverTest {
 
     @Test
     fun `a Rover on the moon, when rotating, should stay on the moon`() {
-        val aRover = Rover(planet = Planet.moon())
+        val aRover = Rover(planet = Moon)
 
         val actual = aRover.receiveCommand(Left)
 
-        assertThat(actual.planet).isEqualTo(Planet.moon())
+        assertThat(actual.planet).isEqualTo(Moon)
     }
 
     @Test
     fun `a Rover on the moon, when moving, should stay on the moon`() {
-        val aRover = Rover(planet = Planet.moon())
+        val aRover = Rover(planet = Moon)
 
         val actual = aRover.receiveCommand(Forwards)
 
-        assertThat(actual.planet).isEqualTo(Planet.moon())
+        assertThat(actual.planet).isEqualTo(Moon)
     }
 
     @Test
     fun `a default Rover should be on the planet Mars`() {
         val defaultRover = Rover()
 
-        assertThat(defaultRover.planet).isEqualTo(Planet.mars())
+        assertThat(defaultRover.planet).isEqualTo(Mars)
     }
 
     @Test
@@ -221,9 +220,7 @@ class RoverTest {
 
     @Test
     fun `a Rover on the Planets' top edge, upon moving forwards North, should be positioned at the Planets' bottom edge`() {
-        val theMoon = Planet(Dimension(3,3))
-
-        val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,1), planet = theMoon)
+        val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,1), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Forwards)
 
@@ -232,9 +229,7 @@ class RoverTest {
 
     @Test
     fun `a Rover on the Planets' top edge, upon moving backwards South, should be positioned at the Planets' bottom edge`() {
-        val theMoon = Planet(Dimension(3,3))
-
-        val aRover = Rover(facingDirection = Direction.SOUTH, position = Position(0,1), planet = theMoon)
+        val aRover = Rover(facingDirection = Direction.SOUTH, position = Position(0,1), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Backwards)
 
@@ -243,9 +238,7 @@ class RoverTest {
 
     @Test
     fun `a Rover on the Planets' bottom edge, upon moving forwards South, should be positioned at the Planets' top edge`() {
-        val theMoon = Planet(Dimension(3,3))
-
-        val aRover = Rover(facingDirection = Direction.SOUTH, position = Position(0,-1), planet = theMoon)
+        val aRover = Rover(facingDirection = Direction.SOUTH, position = Position(0,-1), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Forwards)
 
@@ -254,9 +247,7 @@ class RoverTest {
 
     @Test
     fun `a Rover on the Planets' bottom edge, upon moving backwards North, should be positioned at the Planets' top edge`() {
-        val theMoon = Planet(Dimension(3,3))
-
-        val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,-1), planet = theMoon)
+        val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,-1), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Backwards)
 
@@ -265,9 +256,7 @@ class RoverTest {
 
     @Test
     fun `a Rover on the Planets' right edge, upon moving forwards East, should be positioned at the Planets' left edge`() {
-        val theMoon = Planet(Dimension(3,3))
-
-        val aRover = Rover(facingDirection = Direction.EAST, position = Position(1,0), planet = theMoon)
+        val aRover = Rover(facingDirection = Direction.EAST, position = Position(1,0), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Forwards)
 
@@ -276,9 +265,7 @@ class RoverTest {
 
     @Test
     fun `a Rover on the Planets' right edge, upon moving backwards East, should be positioned at the Planets' left edge`() {
-        val theMoon = Planet(Dimension(3,3))
-
-        val aRover = Rover(facingDirection = Direction.WEST, position = Position(1,0), planet = theMoon)
+        val aRover = Rover(facingDirection = Direction.WEST, position = Position(1,0), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Backwards)
 
@@ -287,9 +274,7 @@ class RoverTest {
 
     @Test
     fun `a Rover on the Planets' left edge, upon moving forwards West, should be positioned at the Planets' right edge`() {
-        val theMoon = Planet(Dimension(3,3))
-
-        val aRover = Rover(facingDirection = Direction.WEST, position = Position(-1,0), planet = theMoon)
+        val aRover = Rover(facingDirection = Direction.WEST, position = Position(-1,0), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Forwards)
 
@@ -298,9 +283,7 @@ class RoverTest {
 
     @Test
     fun `a Rover on the Planets' left edge, upon moving backwards West, should be positioned at the Planets' right edge`() {
-        val theMoon = Planet(Dimension(3,3))
-
-        val aRover = Rover(facingDirection = Direction.EAST, position = Position(-1,0), planet = theMoon)
+        val aRover = Rover(facingDirection = Direction.EAST, position = Position(-1,0), planet = Moon)
 
         val movedRover = aRover.receiveCommand(Backwards)
 

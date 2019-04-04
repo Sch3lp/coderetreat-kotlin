@@ -1,10 +1,11 @@
 package be.swsb.coderetreat.rover
 
+import be.swsb.coderetreat.planet.Mars
 import be.swsb.coderetreat.planet.Planet
 
 data class Rover(val facingDirection: Direction = Direction.NORTH,
                  val position: Position = Position(0, 0),
-                 val planet: Planet = Planet.mars()) {
+                 val planet: Planet = Mars) {
 
     fun receiveCommands(commands: List<RoverCommand>): Rover {
         return commands.fold(this, Rover::receiveCommand)
@@ -12,8 +13,8 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
 
     fun receiveCommand(command: RoverCommand): Rover {
         return when (command) {
-            is RoverCommand.MoveCommand -> move(command)
-            is RoverCommand.RotateCommand -> rotate(command)
+            is RoverCommand.MoveCommand   -> move(debug(command))
+            is RoverCommand.RotateCommand -> rotate(debug(command))
         }
     }
 
@@ -32,8 +33,7 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
 
         //check if newPosition exceeds the planet's edge, and flip either x or y
         val wrappedPosition = wrapPositionIfNecessary(newPosition)
-
-        return Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet)
+        return debug(Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet))
     }
 
     private fun wrapPositionIfNecessary(newPosition: Position): Position {
@@ -66,7 +66,12 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
             is Right -> facingDirection.rotateClockwise()
             is Left  -> facingDirection.rotateCounterClockwise()
         }
-        return Rover(facingDirection = newDirection, position = position, planet = planet)
+        return debug(Rover(facingDirection = newDirection, position = position, planet = planet))
+    }
+
+    private fun <T> debug(any: T): T {
+        println(any)
+        return any
     }
 }
 
