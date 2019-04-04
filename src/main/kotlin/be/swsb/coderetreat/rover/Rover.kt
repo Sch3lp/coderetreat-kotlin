@@ -29,6 +29,9 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
             Direction.SOUTH -> position.stepY(stepDirection.flip())
             Direction.WEST -> position.stepX(stepDirection.flip())
         }
+
+        //check if newPosition exceeds the planet's edge, and flip either x or y
+
         return Rover(facingDirection = this.facingDirection, position = newPosition)
     }
 
