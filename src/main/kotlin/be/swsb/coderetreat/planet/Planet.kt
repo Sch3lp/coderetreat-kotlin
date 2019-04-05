@@ -7,11 +7,10 @@ import be.swsb.coderetreat.rover.Position
 sealed class Planet(private val dimension: Dimension) {
     open val obstaclePositions: List<ObstaclePosition> = emptyList()
 
+    object Moon : Planet(`3x3`())
     data class Mars(private val obstacles: List<ObstaclePosition> = emptyList()) : Planet(`5x5`()) {
         override var obstaclePositions = obstacles
     }
-
-    object Moon : Planet(`3x3`())
 
     fun hasObstacleAt(aPosition: Position): ObstaclePosition? {
         return if (obstaclePositions.contains(aPosition)) aPosition else null

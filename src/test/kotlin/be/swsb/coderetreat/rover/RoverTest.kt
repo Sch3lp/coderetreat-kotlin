@@ -33,7 +33,7 @@ class RoverTest {
     }
 
     @Test
-    fun `a Rover on the moon, when moving, should stay on the moon`() {
+    fun `a Rover on the moon, when moving, should stay on the moon (no teleportation yet)`() {
         val aRover = Rover(planet = Moon)
 
         val actual = aRover.receiveCommand(Forwards)
@@ -48,6 +48,7 @@ class RoverTest {
         assertThat(defaultRover.planet).isEqualTo(Mars())
     }
 
+    // Moving in a direction
     @Test
     fun `a Rover facing North, upon receiving forwards should move 1 position North`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
@@ -192,6 +193,7 @@ class RoverTest {
         assertThat(movedRover).isEqualTo(Rover(position = Position(2, 0), facingDirection = Direction.WEST))
     }
 
+    //rotating
     @Test
     fun `a Rover facing North, upon receiving right, rotates to East`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
@@ -219,6 +221,7 @@ class RoverTest {
         assertThat(rotatedRover).isEqualTo(Rover(facingDirection = Direction.NORTH, position = aRover.position))
     }
 
+    //wrapping
     @Test
     fun `a Rover on the Planets' top edge, upon moving forwards North, should be positioned at the Planets' bottom edge`() {
         val aRover = Rover(facingDirection = Direction.NORTH, position = Position(0,1), planet = Moon)
@@ -300,6 +303,7 @@ class RoverTest {
         assertThat(movedRover.position).isEqualTo(Position(0, 0))
     }
 
+    // obstacles
     @Test
     fun `a Rover having an obstacle right in front of it, upon receiving Forwards, should report the obstacle's position`() {
         val aRover = Rover(planet = Mars(listOf(Position(0,1))))

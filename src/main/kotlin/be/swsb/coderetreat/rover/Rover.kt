@@ -31,11 +31,12 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
         val wrappedPosition = wrapPositionIfNecessary(newPosition, movingDirection)
         val obstaclePosition = checkForObstacleAt(wrappedPosition)
         val finalPosition = if (obstaclePosition != null) position else wrappedPosition
+        val messageWhenObstacle = messageFor(obstaclePosition)
 
         return debug(Rover(facingDirection = facingDirection,
                 planet = planet,
                 position = finalPosition,
-                message = messageFor(obstaclePosition)))
+                message = messageWhenObstacle))
     }
 
     private fun messageFor(obstaclePosition: ObstaclePosition?): String? {
