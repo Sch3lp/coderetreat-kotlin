@@ -10,7 +10,13 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
                  val message: String? = null) {
 
     fun receiveCommands(commands: List<RoverCommand>): Rover {
-        return commands.fold(this, Rover::receiveCommand)
+        return commands.fold(this) { rover, command ->
+            return if (rover.message != null) {
+                rover
+            } else {
+                rover.receiveCommand(command)
+            }
+        }
     }
 
     fun receiveCommand(command: RoverCommand): Rover {
