@@ -9,4 +9,4 @@
 
 ## Rover Map awareness
 * [x] When a Rover exits a map's edge, it enters at the opposite edge
-* [ ] A Rover can detect and warn about obstacles on the planets' surface
+* [x] A Rover can detect and warn about obstacles on the planets' surface
