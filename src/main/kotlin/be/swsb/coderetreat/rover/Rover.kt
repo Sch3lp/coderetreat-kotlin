@@ -1,6 +1,7 @@
 package be.swsb.coderetreat.rover
 
 import be.swsb.coderetreat.planet.Mars
+import be.swsb.coderetreat.planet.ObstaclePosition
 import be.swsb.coderetreat.planet.Planet
 
 data class Rover(val facingDirection: Direction = Direction.NORTH,
@@ -23,21 +24,24 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
         val movingDirection = moveCommand.movingDirection(facingDirection)
 
         val newPosition = moveToNewPosition(movingDirection)
-
-        //check if newPosition exceeds the planet's edge, and flip either x or y
         val wrappedPosition = wrapPositionIfNecessary(newPosition, movingDirection)
+        val obstaclePosition = checkForObstacleAt(wrappedPosition)
+        val finalPosition = if (obstaclePosition != null) position else wrappedPosition
 
-        val message = checkForObstacleAt(wrappedPosition)
-
-        return debug(Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet, message = message))
+        return debug(Rover(facingDirection = facingDirection,
+                planet = planet,
+                position = finalPosition,
+                message = messageFor(obstaclePosition)))
     }
 
-    private fun checkForObstacleAt(aPosition: Position): String? {
-        return if (planet.hasObstacleAt(aPosition)) {
-            "There is an obstacle at ${aPosition.asString()}, ignoring further commands."
-        } else {
-            null
+    private fun messageFor(obstaclePosition: ObstaclePosition?): String? {
+        return obstaclePosition?.let {
+            "There is an obstacle at ${it.asString()}, ignoring further commands."
         }
+    }
+
+    private fun checkForObstacleAt(aPosition: Position): ObstaclePosition? {
+        return planet.hasObstacleAt(aPosition)
     }
 
     private fun moveToNewPosition(movingDirection: MovingDirection): Position {

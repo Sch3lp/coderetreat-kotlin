@@ -53,24 +53,24 @@ class PlanetTest {
     }
 
     @Test
-    fun `hasObstacleAt, given position is an obstacle, should return true`() {
+    fun `hasObstacleAt, given position is an obstacle, should return the given position`() {
         val planetWithObstacles = Mars(listOf(Position(0,0)))
 
-        assertThat(planetWithObstacles.hasObstacleAt(Position(0,0))).isTrue()
+        assertThat(planetWithObstacles.hasObstacleAt(Position(0,0))).isEqualTo(Position(0,0))
     }
 
     @Test
-    fun `hasObstacleAt, given position is not an obstacle, should return false`() {
+    fun `hasObstacleAt, given position is not an obstacle, should return null`() {
         val planetWithObstacles = Mars(listOf(Position(0,0)))
 
-        assertThat(planetWithObstacles.hasObstacleAt(Position(0,1))).isFalse()
+        assertThat(planetWithObstacles.hasObstacleAt(Position(0,1))).isNull()
     }
 
     @Test
-    fun `hasObstacleAt, planet has no obstacles, should return false`() {
+    fun `hasObstacleAt, planet has no obstacles, should return null`() {
         val planetWithObstacles = Mars(emptyList())
 
-        assertThat(planetWithObstacles.hasObstacleAt(Position(0,1))).isFalse()
+        assertThat(planetWithObstacles.hasObstacleAt(Position(0,1))).isNull()
     }
 }
 

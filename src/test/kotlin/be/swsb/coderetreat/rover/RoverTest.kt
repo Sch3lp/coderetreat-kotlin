@@ -344,4 +344,13 @@ class RoverTest {
 
         assertThat(actual.message).isNull()
     }
+
+    @Test
+    fun `a Rover having an obstacle right in front of it, upon receiving Forwards, should stay put`() {
+        val aRover = Rover(position = Position(0,0), planet = Mars(listOf(Position(0,1))))
+
+        val actual = aRover.receiveCommand(Forwards)
+
+        assertThat(actual.position).isEqualTo(Position(0,0))
+    }
 }
