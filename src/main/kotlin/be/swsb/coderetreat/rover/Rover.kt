@@ -9,20 +9,18 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
                  val planet: Planet = Mars(),
                  val message: String? = null) {
 
+    fun receiveCommands(vararg commands: RoverCommand): Rover = receiveCommands(commands.toList())
+
     fun receiveCommands(commands: List<RoverCommand>): Rover {
-        return commands.fold(this) { rover, command ->
-            return if (rover.message != null) {
-                rover
-            } else {
-                rover.receiveCommand(command)
-            }
-        }
+        return commands.fold(this) { rover, cmd -> rover.receiveCommand(cmd) }
     }
 
     fun receiveCommand(command: RoverCommand): Rover {
-        return when (command) {
-            is RoverCommand.MoveCommand -> move(debug(command))
-            is RoverCommand.RotateCommand -> rotate(debug(command))
+        return if (message != null) this else {
+            when (command) {
+                is RoverCommand.MoveCommand -> move(debug(command))
+                is RoverCommand.RotateCommand -> rotate(debug(command))
+            }
         }
     }
 

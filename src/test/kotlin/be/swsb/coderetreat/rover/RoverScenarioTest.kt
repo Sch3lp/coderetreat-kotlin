@@ -26,7 +26,10 @@ class RoverScenarioTest {
 
         val actual = defaultRover.receiveCommands(listOf(Forwards, Forwards, Forwards, Forwards, Forwards))
 
-        assertThat(actual).isEqualTo(Rover(facingDirection = Direction.NORTH, position = Position(0, 2), planet = mars))
-        assertThat(actual.message).isEqualTo("There is an obstacle at (0,-2), ignoring further commands.")
+        assertThat(actual).isEqualTo(Rover(
+                facingDirection = Direction.NORTH,
+                planet = mars,
+                position = Position(0, 2),
+                message = "There is an obstacle at (0,-2), ignoring further commands."))
     }
 }

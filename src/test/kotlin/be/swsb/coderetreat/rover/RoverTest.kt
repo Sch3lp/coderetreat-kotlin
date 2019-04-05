@@ -88,7 +88,7 @@ class RoverTest {
     fun `a Rover facing North, upon receiving forwards twice, should move 2 positions North`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
-        val movedRover = aRover.receiveCommand(Forwards).receiveCommand(Forwards)
+        val movedRover = aRover.receiveCommands(Forwards, Forwards)
 
         assertThat(movedRover).isEqualTo(Rover(position = Position(0, 2), facingDirection = Direction.NORTH))
     }
@@ -97,7 +97,7 @@ class RoverTest {
     fun `a Rover facing East, upon receiving forwards twice, should move 2 positions East`() {
         val aRover = Rover(facingDirection = Direction.EAST)
 
-        val movedRover = aRover.receiveCommand(Forwards).receiveCommand(Forwards)
+        val movedRover = aRover.receiveCommands(Forwards, Forwards)
 
         assertThat(movedRover).isEqualTo(Rover(position = Position(2, 0), facingDirection = Direction.EAST))
     }
@@ -106,7 +106,7 @@ class RoverTest {
     fun `a Rover facing South, upon receiving forwards twice, should move 2 positions South`() {
         val aRover = Rover(facingDirection = Direction.SOUTH)
 
-        val movedRover = aRover.receiveCommand(Forwards).receiveCommand(Forwards)
+        val movedRover = aRover.receiveCommands(Forwards, Forwards)
 
         assertThat(movedRover).isEqualTo(Rover(position = Position(0, -2), facingDirection = Direction.SOUTH))
     }
@@ -115,7 +115,7 @@ class RoverTest {
     fun `a Rover facing West, upon receiving forwards twice, should move 2 positions West`() {
         val aRover = Rover(facingDirection = Direction.WEST)
 
-        val movedRover = aRover.receiveCommand(Forwards).receiveCommand(Forwards)
+        val movedRover = aRover.receiveCommands(Forwards, Forwards)
 
         assertThat(movedRover).isEqualTo(Rover(position = Position(-2, 0), facingDirection = Direction.WEST))
     }
@@ -160,7 +160,7 @@ class RoverTest {
     fun `a Rover facing North, upon receiving backwards twice, should move 2 positions South`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
-        val movedRover = aRover.receiveCommand(Backwards).receiveCommand(Backwards)
+        val movedRover = aRover.receiveCommands(Backwards, Backwards)
 
         assertThat(movedRover).isEqualTo(Rover(position = Position(0, -2), facingDirection = Direction.NORTH))
     }
@@ -169,7 +169,7 @@ class RoverTest {
     fun `a Rover facing East, upon receiving backwards twice, should move 2 positions West`() {
         val aRover = Rover(facingDirection = Direction.EAST)
 
-        val movedRover = aRover.receiveCommand(Backwards).receiveCommand(Backwards)
+        val movedRover = aRover.receiveCommands(Backwards, Backwards)
 
         assertThat(movedRover).isEqualTo(Rover(position = Position(-2, 0), facingDirection = Direction.EAST))
     }
@@ -178,7 +178,7 @@ class RoverTest {
     fun `a Rover facing South, upon receiving backwards twice, should move 2 positions North`() {
         val aRover = Rover(facingDirection = Direction.SOUTH)
 
-        val movedRover = aRover.receiveCommand(Backwards).receiveCommand(Backwards)
+        val movedRover = aRover.receiveCommands(Backwards, Backwards)
 
         assertThat(movedRover).isEqualTo(Rover(position = Position(0, 2), facingDirection = Direction.SOUTH))
     }
@@ -187,7 +187,7 @@ class RoverTest {
     fun `a Rover facing West, upon receiving backwards twice, should move 2 positions East`() {
         val aRover = Rover(facingDirection = Direction.WEST)
 
-        val movedRover = aRover.receiveCommand(Backwards).receiveCommand(Backwards)
+        val movedRover = aRover.receiveCommands(Backwards, Backwards)
 
         assertThat(movedRover).isEqualTo(Rover(position = Position(2, 0), facingDirection = Direction.WEST))
     }
@@ -214,7 +214,7 @@ class RoverTest {
     fun `a Rover facing North, upon receiving left 4 times, rotates back to North`() {
         val aRover = Rover(facingDirection = Direction.NORTH)
 
-        val rotatedRover = aRover.receiveCommand(Left).receiveCommand(Left).receiveCommand(Left).receiveCommand(Left)
+        val rotatedRover = aRover.receiveCommands(Left,Left,Left,Left)
 
         assertThat(rotatedRover).isEqualTo(Rover(facingDirection = Direction.NORTH, position = aRover.position))
     }
@@ -358,8 +358,29 @@ class RoverTest {
     fun `a Rover having an obstacle right in front of it, upon receiving Forwards then Backwards, should also stay put`() {
         val aRover = Rover(position = Position(0,0), planet = Mars(listOf(Position(0,1))))
 
-        val actual = aRover.receiveCommands(listOf(Forwards, Backwards))
+        val actual = aRover.receiveCommands(Forwards, Backwards)
 
         assertThat(actual.position).isEqualTo(Position(0,0))
+    }
+
+    @Test
+    fun `a Rover facing North, having an obstacle right in front of it, upon receiving Forwards then Left, should keep facing North`() {
+        val aRover = Rover(facingDirection = Direction.NORTH,
+                position = Position(0,0),
+                planet = Mars(listOf(Position(0,1))))
+
+        val actual = aRover.receiveCommands(Forwards, Left)
+
+        assertThat(actual.facingDirection).isEqualTo(Direction.NORTH)
+    }
+
+    @Test
+    fun `a Rover facing East, having an obstacle two spaces in front of it, upon receiving Forwards Forwards Left, should keep facing East`() {
+        val aRover = Rover(position = Position(0,0), planet = Mars(listOf(Position(0,-2))))
+
+        val actual = aRover.receiveCommands(Forwards, Forwards, Forwards, Left)
+
+        assertThat(actual.facingDirection).isEqualTo(Direction.NORTH)
+        assertThat(actual.position).isEqualTo(Position(0,2))
     }
 }
