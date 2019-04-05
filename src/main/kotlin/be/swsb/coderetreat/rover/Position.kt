@@ -22,6 +22,10 @@ data class Position(val x: Int, val y: Int) {
     fun flipX(): Position {
         return Position(this.x * -1, this.y)
     }
+
+    fun asString(): String {
+        return "($x,$y)"
+    }
 }
 
 enum class StepDirection {

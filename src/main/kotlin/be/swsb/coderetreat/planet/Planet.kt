@@ -5,8 +5,17 @@ import be.swsb.coderetreat.rover.MovingDirection
 import be.swsb.coderetreat.rover.Position
 
 sealed class Planet(private val dimension: Dimension) {
-    object Mars : Planet(`5x5`())
+    open val obstaclePositions: List<Position> = emptyList()
+
+    data class Mars(private val obstacles: List<Position> = emptyList()) : Planet(`5x5`()) {
+        override var obstaclePositions = obstacles
+    }
+
     object Moon : Planet(`3x3`())
+
+    fun hasObstacleAt(aPosition: Position): Boolean {
+        return obstaclePositions.contains(aPosition)
+    }
 
     fun wrapWhenCrossingEdge(position: Position, movingDirection: MovingDirection): Position? {
         throwExceptionWhenOutOfBounds(position)

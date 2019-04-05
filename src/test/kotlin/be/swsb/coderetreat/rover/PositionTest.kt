@@ -60,4 +60,10 @@ class PositionTest {
         val negativeX = Position(-348756,-7513).flipX()
         assertThat(negativeX).isEqualTo(Position(348756, -7513))
     }
+
+    @Test
+    fun asString() {
+        assertThat(Position(1,0).asString()).isEqualTo("(1,0)")
+        assertThat(Position(-9876,98349874).asString()).isEqualTo("(-9876,98349874)")
+    }
 }

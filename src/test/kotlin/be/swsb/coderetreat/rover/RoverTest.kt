@@ -2,6 +2,7 @@ package be.swsb.coderetreat.rover
 
 import assertk.assertThat
 import assertk.assertions.isEqualTo
+import assertk.assertions.isNull
 import be.swsb.coderetreat.planet.Mars
 import be.swsb.coderetreat.planet.Moon
 import org.junit.Test
@@ -41,10 +42,10 @@ class RoverTest {
     }
 
     @Test
-    fun `a default Rover should be on the planet Mars`() {
+    fun `a default Rover should be on the planet Mars without any obstacles`() {
         val defaultRover = Rover()
 
-        assertThat(defaultRover.planet).isEqualTo(Mars)
+        assertThat(defaultRover.planet).isEqualTo(Mars())
     }
 
     @Test
@@ -297,5 +298,50 @@ class RoverTest {
         val movedRover = aRover.receiveCommand(Backwards)
 
         assertThat(movedRover.position).isEqualTo(Position(0, 0))
+    }
+
+    @Test
+    fun `a Rover having an obstacle right in front of it, upon receiving Forwards, should report the obstacle's position`() {
+        val aRover = Rover(planet = Mars(listOf(Position(0,1))))
+
+        val actual = aRover.receiveCommand(Forwards)
+
+        assertThat(actual.message).isEqualTo("There is an obstacle at (0,1), ignoring further commands.")
+    }
+
+    @Test
+    fun `a Rover having an obstacle right behind it, upon receiving Backwards, should report the obstacle's position`() {
+        val aRover = Rover(planet = Mars(listOf(Position(0,-1))))
+
+        val actual = aRover.receiveCommand(Backwards)
+
+        assertThat(actual.message).isEqualTo("There is an obstacle at (0,-1), ignoring further commands.")
+    }
+
+    @Test
+    fun `a Rover having an obstacle right behind it, upon receiving Forwards, should not report the obstacle's position`() {
+        val aRover = Rover(planet = Mars(listOf(Position(0,-1))))
+
+        val actual = aRover.receiveCommand(Forwards)
+
+        assertThat(actual.message).isNull()
+    }
+
+    @Test
+    fun `a Rover having an obstacle right in front of it, upon receiving Backwards, should not report the obstacle's position`() {
+        val aRover = Rover(planet = Mars(listOf(Position(0,1))))
+
+        val actual = aRover.receiveCommand(Backwards)
+
+        assertThat(actual.message).isNull()
+    }
+
+    @Test
+    fun `a Rover having an obstacle right behind it, upon receiving a RotateCommand, should not report the obstacle's position`() {
+        val aRover = Rover(facingDirection = Direction.EAST, planet = Mars(listOf(Position(0,1))))
+
+        val actual = aRover.receiveCommand(Left)
+
+        assertThat(actual.message).isNull()
     }
 }

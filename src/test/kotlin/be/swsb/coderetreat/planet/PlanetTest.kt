@@ -52,5 +52,25 @@ class PlanetTest {
                 .thrownError { hasMessage("Out of bounds!"); isInstanceOf(OutOfBoundsException::class) }
     }
 
+    @Test
+    fun `hasObstacleAt, given position is an obstacle, should return true`() {
+        val planetWithObstacles = Mars(listOf(Position(0,0)))
+
+        assertThat(planetWithObstacles.hasObstacleAt(Position(0,0))).isTrue()
+    }
+
+    @Test
+    fun `hasObstacleAt, given position is not an obstacle, should return false`() {
+        val planetWithObstacles = Mars(listOf(Position(0,0)))
+
+        assertThat(planetWithObstacles.hasObstacleAt(Position(0,1))).isFalse()
+    }
+
+    @Test
+    fun `hasObstacleAt, planet has no obstacles, should return false`() {
+        val planetWithObstacles = Mars(emptyList())
+
+        assertThat(planetWithObstacles.hasObstacleAt(Position(0,1))).isFalse()
+    }
 }
 

@@ -5,7 +5,8 @@ import be.swsb.coderetreat.planet.Planet
 
 data class Rover(val facingDirection: Direction = Direction.NORTH,
                  val position: Position = Position(0, 0),
-                 val planet: Planet = Mars) {
+                 val planet: Planet = Mars(),
+                 val message: String? = null) {
 
     fun receiveCommands(commands: List<RoverCommand>): Rover {
         return commands.fold(this, Rover::receiveCommand)
@@ -18,8 +19,6 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
         }
     }
 
-    // 2nd Refactor task:
-    // Pass MovingDirection to an Edge (new sealed class) to either wrap or not
     private fun move(moveCommand: RoverCommand.MoveCommand): Rover {
         val movingDirection = moveCommand.movingDirection(facingDirection)
 
@@ -27,7 +26,18 @@ data class Rover(val facingDirection: Direction = Direction.NORTH,
 
         //check if newPosition exceeds the planet's edge, and flip either x or y
         val wrappedPosition = wrapPositionIfNecessary(newPosition, movingDirection)
-        return debug(Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet))
+
+        val message = checkForObstacleAt(wrappedPosition)
+
+        return debug(Rover(facingDirection = facingDirection, position = wrappedPosition, planet = planet, message = message))
+    }
+
+    private fun checkForObstacleAt(aPosition: Position): String? {
+        return if (planet.hasObstacleAt(aPosition)) {
+            "There is an obstacle at ${aPosition.asString()}, ignoring further commands."
+        } else {
+            null
+        }
     }
 
     private fun moveToNewPosition(movingDirection: MovingDirection): Position {
@@ -63,7 +73,7 @@ sealed class RoverCommand {
         object Backwards : MoveCommand()
 
         fun movingDirection(facingDirection: Direction): MovingDirection {
-            return when(this) {
+            return when (this) {
                 is be.swsb.coderetreat.rover.Forwards -> facingDirection
                 is be.swsb.coderetreat.rover.Backwards -> facingDirection.flip()
             }
