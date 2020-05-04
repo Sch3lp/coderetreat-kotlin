@@ -16,18 +16,17 @@ object VinValidator {
         if (vin.isNullOrBlank()) return Optional.of(ValidationError.from("VIN_MANDATORY"))
         if (vin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
 
-        var sum = 0
+        if (!vin.matches("([A-Z0-9])*".toRegex())) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
         if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
+        var sum = 0
         vin.forEachIndexed { i, c ->
             val value: Int?
             // Only accept the 26 letters of the alphabet
             if (c in 'A'..'Z') {
                 value = valueMap[c] ?: error("temp error; this case is covered by an earlier VIN_ILLEGAL_CHARACTER")
-            } else if (Character.isDigit(c)) {
+            } else {
                 value = c - '0'
-            } else {    // illegal character
-                return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
             }
             sum += WEIGHTS[i] * value
         }
