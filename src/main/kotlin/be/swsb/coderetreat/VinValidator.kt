@@ -18,7 +18,9 @@ object VinValidator {
         if (vin.isNotAlphaNumerical()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
         if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
-        return if (checkDigitFailed(vin)) Optional.of(ValidationError.from("VIN_ILLEGAL")) else Optional.empty<ValidationError>()
+        if (checkDigitFailed(vin)) return Optional.of(ValidationError.from("VIN_ILLEGAL"))
+
+        return Optional.empty<ValidationError>()
     }
 
     private fun checkDigitFailed(vin: String): Boolean {
