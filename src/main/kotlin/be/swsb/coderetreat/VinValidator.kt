@@ -6,7 +6,6 @@ import java.util.*
 object VinValidator {
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
-    //TODO: I, O and Q get 0 as value, and this makes them return VIN_ILLEGAL_CHARACTER
     private val valueMap: Map<Char, Int> = (('A'..'Z') + ('0'..'9'))
             .zip(listOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9) + listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
             .toMap()
@@ -19,20 +18,18 @@ object VinValidator {
         if (!vin.matches("([A-Z0-9])*".toRegex())) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
         if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
-        var sum = vin.foldIndexed(0) { i, acc, c ->
+        return checkDigit(vin)
+    }
+
+    private fun checkDigit(vin: String): Optional<ValidationError> {
+        val sum = vin.foldIndexed(0) { i, acc, c ->
             val value = valueMap[c] ?: 0
             acc + WEIGHTS[i] * value
         }
-
-        // check digit
-        sum %= 11
+        val mod11 = sum % 11
         val check = vin[8]
-        if (sum == 10 && check == 'X') {
-            return Optional.empty<ValidationError>()
-        }
-        return if (sum == transliterate(check)) {
-            Optional.empty<ValidationError>()
-        } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
+        if (mod11 == 10 && check == 'X') return Optional.empty<ValidationError>()
+        return if (mod11 == transliterate(check)) Optional.empty<ValidationError>() else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
 
     private fun transliterate(c: Char) = when (c) {
