@@ -6,15 +6,14 @@ import java.util.*
 object VinValidator {
     fun validate(vinToValidate: String?): Optional<ValidationError> {
         val vin = vinToValidate.strippedToUppercase()
-        if (vin.isNullOrBlank()) return Optional.of(ValidationError.from("VIN_MANDATORY"))
-        if (vin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
-
-        if (vin.isNotAlphaNumerical()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
-        if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
-
-        if (vin.checkSumIsInvalid()) return Optional.of(ValidationError.from("VIN_ILLEGAL"))
-
-        return Optional.empty<ValidationError>()
+        return when {
+            vin.isNullOrBlank() -> return Optional.of(ValidationError.from("VIN_MANDATORY"))
+            vin.length != 17 -> return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
+            vin.isNotAlphaNumerical() -> return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
+            vin.containsOneOf('I', 'O', 'Q') -> return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
+            vin.checkSumIsInvalid() -> return Optional.of(ValidationError.from("VIN_ILLEGAL"))
+            else -> Optional.empty<ValidationError>()
+        }
     }
 }
 
