@@ -38,10 +38,10 @@ fun String.checkSumIsInvalid(): Boolean {
         acc + weights[i] * value
     }
     val mod11 = sum % 11
-    val ninethChar = this[8]
+    val ninthChar = this[8]
 
     fun specialCharacter(check: Char, mod11: Int) = (mod11 == 10 && check == 'X')
-    return !(specialCharacter(ninethChar, mod11) || mod11 == ninethChar.transliterate())
+    return !(specialCharacter(ninthChar, mod11) || mod11 == ninthChar.transliterate())
 }
 
 fun Char.transliterate() = when (this) {
