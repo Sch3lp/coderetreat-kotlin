@@ -48,28 +48,17 @@ object VinValidator {
             .replace(" ".toRegex(), "")
             .toUpperCase()
 
-    private fun transliterate(check: Char): Int {
-        if (check == 'A' || check == 'J') {
-            return 1
-        } else if (check == 'B' || check == 'K' || check == 'S') {
-            return 2
-        } else if (check == 'C' || check == 'L' || check == 'T') {
-            return 3
-        } else if (check == 'D' || check == 'M' || check == 'U') {
-            return 4
-        } else if (check == 'E' || check == 'N' || check == 'V') {
-            return 5
-        } else if (check == 'F' || check == 'W') {
-            return 6
-        } else if (check == 'G' || check == 'P' || check == 'X') {
-            return 7
-        } else if (check == 'H' || check == 'Y') {
-            return 8
-        } else if (check == 'R' || check == 'Z') {
-            return 9
-        } else if (Integer.valueOf(Character.getNumericValue(check)) != null) { //hacky but works
-            return Character.getNumericValue(check)
-        }
-        return -1
+    private fun transliterate(c: Char) = when {
+        c == 'A' || c == 'J' -> 1
+        c == 'B' || c == 'K' || c == 'S' -> 2
+        c == 'C' || c == 'L' || c == 'T' -> 3
+        c == 'D' || c == 'M' || c == 'U' -> 4
+        c == 'E' || c == 'N' || c == 'V' -> 5
+        c == 'F' || c == 'W' -> 6
+        c == 'G' || c == 'P' || c == 'X' -> 7
+        c == 'H' || c == 'Y' -> 8
+        c == 'R' || c == 'Z' -> 9
+        Integer.valueOf(Character.getNumericValue(c)) != null -> Character.getNumericValue(c) //hacky but works
+        else -> -1
     }
 }
