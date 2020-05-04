@@ -58,7 +58,6 @@ object VinValidator {
         c in listOf('G', 'P', 'X') -> 7
         c in listOf('H', 'Y') -> 8
         c in listOf('R', 'Z') -> 9
-        Integer.valueOf(Character.getNumericValue(c)) != null -> Character.getNumericValue(c) //hacky but works
-        else -> -1
+        else -> Character.getNumericValue(c)
     }
 }
