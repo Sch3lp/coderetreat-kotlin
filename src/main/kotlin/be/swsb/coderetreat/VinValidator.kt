@@ -48,16 +48,16 @@ object VinValidator {
             .replace(" ".toRegex(), "")
             .toUpperCase()
 
-    private fun transliterate(c: Char) = when {
-        c in listOf('A', 'J') -> 1
-        c in listOf('B', 'K', 'S') -> 2
-        c in listOf('C', 'L', 'T') -> 3
-        c in listOf('D', 'M', 'U') -> 4
-        c in listOf('E', 'N', 'V') -> 5
-        c in listOf('F', 'W') -> 6
-        c in listOf('G', 'P', 'X') -> 7
-        c in listOf('H', 'Y') -> 8
-        c in listOf('R', 'Z') -> 9
+    private fun transliterate(c: Char) = when (c) {
+        in listOf('A', 'J') -> 1
+        in listOf('B', 'K', 'S') -> 2
+        in listOf('C', 'L', 'T') -> 3
+        in listOf('D', 'M', 'U') -> 4
+        in listOf('E', 'N', 'V') -> 5
+        in listOf('F', 'W') -> 6
+        in listOf('G', 'P', 'X') -> 7
+        in listOf('H', 'Y') -> 8
+        in listOf('R', 'Z') -> 9
         else -> Character.getNumericValue(c)
     }
 }
