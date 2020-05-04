@@ -9,10 +9,10 @@ object VinValidator {
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
-        if (vinToValidate.isNullOrBlank()) {
+        val vin = strippedToUppercase(vinToValidate)
+        if (vin.isNullOrBlank()) {
             return Optional.of(ValidationError.from("VIN_MANDATORY"))
         }
-        val vin = strippedToUppercase(vinToValidate)
         if (vin.length != 17) {
             return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         }
@@ -44,10 +44,10 @@ object VinValidator {
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
 
-    private fun strippedToUppercase(value: String) = value
-            .replace("-".toRegex(), "")
-            .replace(" ".toRegex(), "")
-            .toUpperCase()
+    private fun strippedToUppercase(value: String?) = value
+            ?.replace("-".toRegex(), "")
+            ?.replace(" ".toRegex(), "")
+            ?.toUpperCase()
 
     private fun transliterate(c: Char) = when (c) {
         in listOf('A', 'J') -> 1
