@@ -27,10 +27,12 @@ object VinValidator {
             acc + WEIGHTS[i] * value
         }
         val mod11 = sum % 11
-        val check = vin[8]
-        if (mod11 == 10 && check == 'X') return Optional.empty<ValidationError>()
-        return if (mod11 == check.transliterate()) Optional.empty<ValidationError>() else Optional.of(ValidationError.from("VIN_ILLEGAL"))
+        val ninethChar = vin[8]
+        return if (specialCharacter(ninethChar, mod11) || mod11 == ninethChar.transliterate()) Optional.empty<ValidationError>()
+        else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
+
+    private fun specialCharacter(check: Char, mod11: Int) = (mod11 == 10 && check == 'X')
 }
 
 fun String?.strippedToUppercase() = this
