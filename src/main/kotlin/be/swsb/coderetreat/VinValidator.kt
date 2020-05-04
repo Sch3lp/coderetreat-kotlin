@@ -49,15 +49,15 @@ object VinValidator {
             .toUpperCase()
 
     private fun transliterate(c: Char) = when {
-        c == 'A' || c == 'J' -> 1
-        c == 'B' || c == 'K' || c == 'S' -> 2
-        c == 'C' || c == 'L' || c == 'T' -> 3
-        c == 'D' || c == 'M' || c == 'U' -> 4
-        c == 'E' || c == 'N' || c == 'V' -> 5
-        c == 'F' || c == 'W' -> 6
-        c == 'G' || c == 'P' || c == 'X' -> 7
-        c == 'H' || c == 'Y' -> 8
-        c == 'R' || c == 'Z' -> 9
+        c in listOf('A', 'J') -> 1
+        c in listOf('B', 'K', 'S') -> 2
+        c in listOf('C', 'L', 'T') -> 3
+        c in listOf('D', 'M', 'U') -> 4
+        c in listOf('E', 'N', 'V') -> 5
+        c in listOf('F', 'W') -> 6
+        c in listOf('G', 'P', 'X') -> 7
+        c in listOf('H', 'Y') -> 8
+        c in listOf('R', 'Z') -> 9
         Integer.valueOf(Character.getNumericValue(c)) != null -> Character.getNumericValue(c) //hacky but works
         else -> -1
     }
