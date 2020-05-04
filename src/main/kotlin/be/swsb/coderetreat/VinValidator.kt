@@ -4,6 +4,7 @@ import java.util.*
 
 
 object VinValidator {
+    // TODO values map to letters, values are also used in transliterate (except I, I is not covered in transliterate. Bug?)
     private val VALUES = intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9)
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
@@ -34,7 +35,7 @@ object VinValidator {
         }
         // check digit
         sum %= 11
-        val check = vin[8]
+        val check = vin[8] //TODO is there never an I on the 8th index?
         if (sum == 10 && check == 'X') {
             return Optional.empty<ValidationError>()
         }
