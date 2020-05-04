@@ -15,7 +15,7 @@ object VinValidator {
         if (vin.isNullOrBlank()) return Optional.of(ValidationError.from("VIN_MANDATORY"))
         if (vin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
 
-        if (!vin.matches("([A-Z0-9])*".toRegex())) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
+        if (!vin.isAlphaNumerical()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
         if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
         return checkDigit(vin)
@@ -40,6 +40,7 @@ fun String?.strippedToUppercase() = this
         ?.replace(" ".toRegex(), "")
         ?.toUpperCase()
 
+fun String.isAlphaNumerical() = this.matches("^([A-Z0-9])*$".toRegex())
 fun String.containsOneOf(vararg c : Char) = this.any { it in c }
 
 fun Char.transliterate() = when (this) {
