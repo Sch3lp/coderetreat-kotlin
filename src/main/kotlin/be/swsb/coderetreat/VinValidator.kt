@@ -14,8 +14,7 @@ object VinValidator {
         if (vin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
 
         var sum = 0
-        for (i in 0..16) {
-            val c = vin[i]
+        vin.forEachIndexed { i, c ->
             var value: Int
             // Only accept the 26 letters of the alphabet
             if (c in 'A'..'Z') {
@@ -30,6 +29,7 @@ object VinValidator {
             }
             sum += WEIGHTS[i] * value
         }
+
         // check digit
         sum %= 11
         val check = vin[8] //TODO is there never an I on the 8th index?
