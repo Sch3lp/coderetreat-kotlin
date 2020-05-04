@@ -40,7 +40,7 @@ fun String.checkSumIsInvalid(): Boolean {
     val mod11 = sum % 11
     val ninthChar = this[8]
 
-    fun specialCharacter(check: Char, mod11: Int) = (mod11 == 10 && check == 'X')
+    fun specialCharacter(ninthChar: Char, mod11: Int) = (mod11 == 10 && ninthChar == 'X')
     return !(specialCharacter(ninthChar, mod11) || mod11 == ninthChar.transliterate())
 }
 
