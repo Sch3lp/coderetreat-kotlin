@@ -29,20 +29,7 @@ object VinValidator {
         val mod11 = sum % 11
         val check = vin[8]
         if (mod11 == 10 && check == 'X') return Optional.empty<ValidationError>()
-        return if (mod11 == transliterate(check)) Optional.empty<ValidationError>() else Optional.of(ValidationError.from("VIN_ILLEGAL"))
-    }
-
-    private fun transliterate(c: Char) = when (c) {
-        in listOf('A', 'J') -> 1
-        in listOf('B', 'K', 'S') -> 2
-        in listOf('C', 'L', 'T') -> 3
-        in listOf('D', 'M', 'U') -> 4
-        in listOf('E', 'N', 'V') -> 5
-        in listOf('F', 'W') -> 6
-        in listOf('G', 'P', 'X') -> 7
-        in listOf('H', 'Y') -> 8
-        in listOf('R', 'Z') -> 9
-        else -> Character.getNumericValue(c)
+        return if (mod11 == check.transliterate()) Optional.empty<ValidationError>() else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
 }
 
@@ -52,3 +39,16 @@ fun String?.strippedToUppercase() = this
         ?.toUpperCase()
 
 fun String.containsOneOf(vararg c : Char) = this.any { it in c }
+
+fun Char.transliterate() = when (this) {
+    in listOf('A', 'J') -> 1
+    in listOf('B', 'K', 'S') -> 2
+    in listOf('C', 'L', 'T') -> 3
+    in listOf('D', 'M', 'U') -> 4
+    in listOf('E', 'N', 'V') -> 5
+    in listOf('F', 'W') -> 6
+    in listOf('G', 'P', 'X') -> 7
+    in listOf('H', 'Y') -> 8
+    in listOf('R', 'Z') -> 9
+    else -> Character.getNumericValue(this)
+}
