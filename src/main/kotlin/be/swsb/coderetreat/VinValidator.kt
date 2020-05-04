@@ -11,7 +11,7 @@ object VinValidator {
         if (vinToValidate == null || vinToValidate.isBlank()) {
             return Optional.of(ValidationError.from("VIN_MANDATORY"))
         }
-        val vin = cleanUpVin(vinToValidate)
+        val vin = strippedToUppercase(vinToValidate)
         if (vin.length != 17) {
             return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         }
@@ -43,7 +43,7 @@ object VinValidator {
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
 
-    private fun cleanUpVin(value: String) = value
+    private fun strippedToUppercase(value: String) = value
             .replace("-".toRegex(), "")
             .replace(" ".toRegex(), "")
             .toUpperCase()
