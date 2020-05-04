@@ -17,12 +17,13 @@ object VinValidator {
         if (vin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
 
         var sum = 0
+        if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
+
         vin.forEachIndexed { i, c ->
             val value: Int?
             // Only accept the 26 letters of the alphabet
             if (c in 'A'..'Z') {
-                value = valueMap[c]
-                if (value == null || value == 0) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
+                value = valueMap[c] ?: error("temp error; this case is covered by an earlier VIN_ILLEGAL_CHARACTER")
             } else if (Character.isDigit(c)) {
                 value = c - '0'
             } else {    // illegal character
@@ -30,6 +31,7 @@ object VinValidator {
             }
             sum += WEIGHTS[i] * value
         }
+
 
         // check digit
         sum %= 11
@@ -60,3 +62,5 @@ object VinValidator {
         else -> Character.getNumericValue(c)
     }
 }
+
+fun String.containsOneOf(vararg c : Char) = this.any { it in c }
