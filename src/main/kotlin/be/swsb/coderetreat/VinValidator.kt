@@ -19,10 +19,9 @@ object VinValidator {
         if (!vin.matches("([A-Z0-9])*".toRegex())) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
         if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
-        var sum = 0
-        vin.forEachIndexed { i, c ->
-            val value: Int = valueMap[c] ?: 0
-            sum += WEIGHTS[i] * value
+        var sum = vin.foldIndexed(0) { i, acc, c ->
+            val value = valueMap[c] ?: 0
+            acc + WEIGHTS[i] * value
         }
 
         // check digit
