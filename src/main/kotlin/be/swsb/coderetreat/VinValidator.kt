@@ -4,9 +4,12 @@ import java.util.*
 
 
 object VinValidator {
-    // TODO values map to letters, values are also used in transliterate (except I, I is not covered in transliterate. Bug?)
-    private val VALUES = intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9)
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
+
+    //TODO: I, O and Q get 0 as value, and this makes them return VIN_ILLEGAL_CHARACTER
+    private val valueMap: Map<Char, Int> = ('A'..'Z')
+            .zip(listOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9))
+            .toMap()
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
         val vin = strippedToUppercase(vinToValidate)
@@ -15,13 +18,11 @@ object VinValidator {
 
         var sum = 0
         vin.forEachIndexed { i, c ->
-            var value: Int
+            val value: Int?
             // Only accept the 26 letters of the alphabet
             if (c in 'A'..'Z') {
-                value = VALUES[c - 'A']
-                if (value == 0) {
-                    return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
-                }
+                value = valueMap[c]
+                if (value == null || value == 0) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
             } else if (Character.isDigit(c)) {
                 value = c - '0'
             } else {    // illegal character
