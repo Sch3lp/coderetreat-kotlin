@@ -20,7 +20,7 @@ object VinValidator {
             val c = vin[i]
             var value: Int
             // Only accept the 26 letters of the alphabet
-            if (c >= 'A' && c <= 'Z') {
+            if (c in 'A'..'Z') {
                 value = VALUES[c - 'A']
                 if (value == 0) {
                     return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
@@ -30,10 +30,10 @@ object VinValidator {
             } else {    // illegal character
                 return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
             }
-            sum = sum + WEIGHTS[i] * value
+            sum += WEIGHTS[i] * value
         }
         // check digit
-        sum = sum % 11
+        sum %= 11
         val check = vin[8]
         if (sum == 10 && check == 'X') {
             return Optional.empty<ValidationError>()
