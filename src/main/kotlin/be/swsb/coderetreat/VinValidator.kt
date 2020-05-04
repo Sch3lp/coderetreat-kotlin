@@ -18,18 +18,17 @@ object VinValidator {
         if (vin.isNotAlphaNumerical()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
         if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
-        return checkDigit(vin)
+        return if (checkDigitFailed(vin)) Optional.of(ValidationError.from("VIN_ILLEGAL")) else Optional.empty<ValidationError>()
     }
 
-    private fun checkDigit(vin: String): Optional<ValidationError> {
+    private fun checkDigitFailed(vin: String): Boolean {
         val sum = vin.foldIndexed(0) { i, acc, c ->
             val value = valueMap[c] ?: 0
             acc + WEIGHTS[i] * value
         }
         val mod11 = sum % 11
         val ninethChar = vin[8]
-        return if (specialCharacter(ninethChar, mod11) || mod11 == ninethChar.transliterate()) Optional.empty<ValidationError>()
-        else Optional.of(ValidationError.from("VIN_ILLEGAL"))
+        return !(specialCharacter(ninethChar, mod11) || mod11 == ninethChar.transliterate())
     }
 
     private fun specialCharacter(check: Char, mod11: Int) = (mod11 == 10 && check == 'X')
