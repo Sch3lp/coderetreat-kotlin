@@ -12,7 +12,7 @@ object VinValidator {
             .toMap()
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
-        val vin = strippedToUppercase(vinToValidate)
+        val vin = vinToValidate.strippedToUppercase()
         if (vin.isNullOrBlank()) return Optional.of(ValidationError.from("VIN_MANDATORY"))
         if (vin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
 
@@ -26,7 +26,7 @@ object VinValidator {
 
         // check digit
         sum %= 11
-        val check = vin[8] //TODO is there never an I on the 8th index?
+        val check = vin[8]
         if (sum == 10 && check == 'X') {
             return Optional.empty<ValidationError>()
         }
@@ -34,11 +34,6 @@ object VinValidator {
             Optional.empty<ValidationError>()
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
-
-    private fun strippedToUppercase(value: String?) = value
-            ?.replace("-".toRegex(), "")
-            ?.replace(" ".toRegex(), "")
-            ?.toUpperCase()
 
     private fun transliterate(c: Char) = when (c) {
         in listOf('A', 'J') -> 1
@@ -53,5 +48,10 @@ object VinValidator {
         else -> Character.getNumericValue(c)
     }
 }
+
+fun String?.strippedToUppercase() = this
+        ?.replace("-".toRegex(), "")
+        ?.replace(" ".toRegex(), "")
+        ?.toUpperCase()
 
 fun String.containsOneOf(vararg c : Char) = this.any { it in c }
