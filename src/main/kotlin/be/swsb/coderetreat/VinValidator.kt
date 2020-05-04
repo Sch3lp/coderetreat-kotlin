@@ -10,12 +10,9 @@ object VinValidator {
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
         val vin = strippedToUppercase(vinToValidate)
-        if (vin.isNullOrBlank()) {
-            return Optional.of(ValidationError.from("VIN_MANDATORY"))
-        }
-        if (vin.length != 17) {
-            return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
-        }
+        if (vin.isNullOrBlank()) return Optional.of(ValidationError.from("VIN_MANDATORY"))
+        if (vin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
+
         var sum = 0
         for (i in 0..16) {
             val c = vin[i]
