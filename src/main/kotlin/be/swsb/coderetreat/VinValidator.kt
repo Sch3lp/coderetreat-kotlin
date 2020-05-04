@@ -12,7 +12,7 @@ object VinValidator {
         if (vin.isNotAlphaNumerical()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
         if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
-        if (vin.checkDigitFailed()) return Optional.of(ValidationError.from("VIN_ILLEGAL"))
+        if (vin.checkSumIsInvalid()) return Optional.of(ValidationError.from("VIN_ILLEGAL"))
 
         return Optional.empty<ValidationError>()
     }
@@ -27,7 +27,7 @@ fun String.isAlphaNumerical() = this.matches("^([A-Z0-9])*$".toRegex())
 fun String.isNotAlphaNumerical() = !this.isAlphaNumerical()
 fun String.containsOneOf(vararg c : Char) = this.any { it in c }
 
-fun String.checkDigitFailed(): Boolean {
+fun String.checkSumIsInvalid(): Boolean {
     val weights = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     val valueMap: Map<Char, Int> = (('A'..'Z') + ('0'..'9'))
