@@ -4,12 +4,6 @@ import java.util.*
 
 
 object VinValidator {
-    private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
-
-    private val valueMap: Map<Char, Int> = (('A'..'Z') + ('0'..'9'))
-            .zip(listOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9) + listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
-            .toMap()
-
     fun validate(vinToValidate: String?): Optional<ValidationError> {
         val vin = vinToValidate.strippedToUppercase()
         if (vin.isNullOrBlank()) return Optional.of(ValidationError.from("VIN_MANDATORY"))
@@ -18,22 +12,10 @@ object VinValidator {
         if (vin.isNotAlphaNumerical()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
         if (vin.containsOneOf('I', 'O', 'Q')) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
-        if (checkDigitFailed(vin)) return Optional.of(ValidationError.from("VIN_ILLEGAL"))
+        if (vin.checkDigitFailed()) return Optional.of(ValidationError.from("VIN_ILLEGAL"))
 
         return Optional.empty<ValidationError>()
     }
-
-    private fun checkDigitFailed(vin: String): Boolean {
-        val sum = vin.foldIndexed(0) { i, acc, c ->
-            val value = valueMap[c] ?: 0
-            acc + WEIGHTS[i] * value
-        }
-        val mod11 = sum % 11
-        val ninethChar = vin[8]
-        return !(specialCharacter(ninethChar, mod11) || mod11 == ninethChar.transliterate())
-    }
-
-    private fun specialCharacter(check: Char, mod11: Int) = (mod11 == 10 && check == 'X')
 }
 
 fun String?.strippedToUppercase() = this
@@ -44,6 +26,24 @@ fun String?.strippedToUppercase() = this
 fun String.isAlphaNumerical() = this.matches("^([A-Z0-9])*$".toRegex())
 fun String.isNotAlphaNumerical() = !this.isAlphaNumerical()
 fun String.containsOneOf(vararg c : Char) = this.any { it in c }
+
+fun String.checkDigitFailed(): Boolean {
+    val weights = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
+
+    val valueMap: Map<Char, Int> = (('A'..'Z') + ('0'..'9'))
+            .zip(listOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9) + listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
+            .toMap()
+
+    val sum = this.foldIndexed(0) { i, acc, c ->
+        val value = valueMap[c] ?: 0
+        acc + weights[i] * value
+    }
+    val mod11 = sum % 11
+    val ninethChar = this[8]
+
+    fun specialCharacter(check: Char, mod11: Int) = (mod11 == 10 && check == 'X')
+    return !(specialCharacter(ninethChar, mod11) || mod11 == ninethChar.transliterate())
+}
 
 fun Char.transliterate() = when (this) {
     in listOf('A', 'J') -> 1
