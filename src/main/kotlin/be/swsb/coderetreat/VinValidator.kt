@@ -7,8 +7,8 @@ object VinValidator {
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     //TODO: I, O and Q get 0 as value, and this makes them return VIN_ILLEGAL_CHARACTER
-    private val valueMap: Map<Char, Int> = ('A'..'Z')
-            .zip(listOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9))
+    private val valueMap: Map<Char, Int> = (('A'..'Z') + ('0'..'9'))
+            .zip(listOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9) + listOf(0, 1, 2, 3, 4, 5, 6, 7, 8, 9))
             .toMap()
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
@@ -21,16 +21,9 @@ object VinValidator {
 
         var sum = 0
         vin.forEachIndexed { i, c ->
-            val value: Int?
-            // Only accept the 26 letters of the alphabet
-            if (c in 'A'..'Z') {
-                value = valueMap[c] ?: error("temp error; this case is covered by an earlier VIN_ILLEGAL_CHARACTER")
-            } else {
-                value = c - '0'
-            }
+            val value: Int = valueMap[c] ?: 0
             sum += WEIGHTS[i] * value
         }
-
 
         // check digit
         sum %= 11
