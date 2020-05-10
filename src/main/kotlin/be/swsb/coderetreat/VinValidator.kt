@@ -4,7 +4,8 @@ import java.util.*
 
 
 object VinValidator {
-    private val VALUES = intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9)
+    //private val ALPHA  =                    A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
+    private val alphabetValueMap = intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9)
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
@@ -22,7 +23,7 @@ object VinValidator {
             var value: Int
             // Only accept the 26 letters of the alphabet
             if (c in 'A'..'Z') {
-                value = VALUES[c - 'A']
+                value = alphabetValueMap[c - 'A']
                 if (value == 0) {
                     return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
                 }
