@@ -4,10 +4,12 @@ import java.util.*
 
 
 object VinValidator {
-    private val transliterationMap =
+    private val tlm =
                  listOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
             .zip(listOf( 1,   2,   3,   4,   5,   6,   7,   8,   0,   1,   2,   3,   4,   5,   0,   7,   0,   9,   2,   3,   4,   5,   6,   7,   8,   9,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9))
             .toMap()
+
+    private val transliterationMap = TransliterationMap(tlm)
     private val weights = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
@@ -49,4 +51,4 @@ private fun Char.isNotAlphaNumerical() = !this.isAlphaNumerical()
 private fun Char.transliterate(transliterationMap: TransliterationMap) = transliterationMap[this]
 private fun TransliterationMap.illegalCharacters() = this.filterKeys { it != '0' }.filterValues { it == 0 }
 
-typealias TransliterationMap = Map<Char, Int>
+data class TransliterationMap(private val _internalMap: Map<Char, Int>): Map<Char, Int> by _internalMap
