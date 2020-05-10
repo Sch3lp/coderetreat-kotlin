@@ -46,6 +46,9 @@ private fun Char.isNotAlphaNumerical() = !this.isAlphaNumerical()
 private fun Char.transliterate(transliterationMap: TransliterationMap) = transliterationMap[this]
 
 data class TransliterationMap private constructor(private val _internalMap: Map<Char, Int>): Map<Char, Int> by _internalMap {
+
+    fun illegalCharacters() = listOf('I', 'O', 'Q')
+
     companion object {
         fun vinValidationMap(): TransliterationMap = TransliterationMap(
                 listOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
@@ -54,5 +57,4 @@ data class TransliterationMap private constructor(private val _internalMap: Map<
         )
     }
 }
-private fun TransliterationMap.illegalCharacters() = this.filterKeys { it != '0' }.filterValues { it == 0 }
 
