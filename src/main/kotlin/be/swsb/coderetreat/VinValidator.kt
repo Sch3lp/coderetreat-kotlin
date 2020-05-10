@@ -43,13 +43,10 @@ object VinValidator {
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
 
-    private fun cleanUpVin(value: String): String {
-        var result = value
-        result = result.replace("-".toRegex(), "")
-        result = result.replace(" ".toRegex(), "")
-        result = result.toUpperCase()
-        return result
-    }
+    private fun cleanUpVin(value: String) = value
+            .replace("-".toRegex(), "")
+            .replace(" ".toRegex(), "")
+            .toUpperCase()
 
     private fun transliterate(check: Char): Int {
         if (check == 'A' || check == 'J') {
