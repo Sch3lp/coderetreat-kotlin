@@ -14,7 +14,7 @@ object VinValidator {
         val cleanedUpVin = vinToValidate.strippedOfDashesBlanksAndUppercased()
                 ?: return Optional.of(ValidationError.from("VIN_MANDATORY"))
         if (cleanedUpVin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
-        if (cleanedUpVin.containsIllegalCharacters()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
+        if (cleanedUpVin.containsIllegalCharacters(transliterationMap)) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
         if (cleanedUpVin.hasInvalidChecksum(transliterationMap, weights)) return Optional.of(ValidationError.from("VIN_ILLEGAL"))
         return Optional.empty<ValidationError>()
     }
@@ -42,8 +42,9 @@ private fun String.hasInvalidChecksum(transliterationMap: Map<Char, Int>, weight
 
 private fun String.getCheckCharacter() = this[8]
 
-private fun String.containsIllegalCharacters() = this.any { it.isIllegalCharacter() }
-private fun Char.isIllegalCharacter() = this.isNotAlphaNumerical() || this in listOf('I', 'O', 'Q')
+private fun String.containsIllegalCharacters(transliterationMap: Map<Char, Int>) = this.any { it.isIllegalCharacter(transliterationMap) }
+private fun Char.isIllegalCharacter(transliterationMap: Map<Char, Int>) = this.isNotAlphaNumerical() || this in transliterationMap.illegalCharacters()
 private fun Char.isAlphaNumerical() = "[A-Z0-9]*".toRegex().matches("$this")
 private fun Char.isNotAlphaNumerical() = !this.isAlphaNumerical()
 private fun Char.transliterate(transliterationMap: Map<Char, Int>) = transliterationMap[this]
+private fun Map<Char, Int>.illegalCharacters() = this.filterKeys { it != '0' }.filterValues { it == 0 }
