@@ -25,6 +25,7 @@ private fun String?.strippedOfDashesBlanksAndUppercased() = this
         ?.replace(" ".toRegex(), "")
         ?.toUpperCase()
         ?.ifBlank { null }
+
 private fun String.hasInvalidChecksum(transliterationMap: Map<Char, Int>, weights: IntArray): Boolean {
     fun isValidSpecialCase(mod: Int, checkCharacter: Char) = mod == 10 && checkCharacter == 'X'
     fun isValidTransliteration(mod: Int, checkCharacter: Char) = mod == checkCharacter.transliterate(transliterationMap)
@@ -38,10 +39,11 @@ private fun String.hasInvalidChecksum(transliterationMap: Map<Char, Int>, weight
     val mod = checkSum % 11
     return !isValidChecksum(mod, this.getCheckCharacter())
 }
+
 private fun String.getCheckCharacter() = this[8]
 
 private fun String.containsIllegalCharacters() = this.any { it.isIllegalCharacter() }
+private fun Char.isIllegalCharacter() = this.isNotAlphaNumerical() || this in listOf('I', 'O', 'Q')
 private fun Char.isAlphaNumerical() = "[A-Z0-9]*".toRegex().matches("$this")
 private fun Char.isNotAlphaNumerical() = !this.isAlphaNumerical()
-private fun Char.isIllegalCharacter() = this.isNotAlphaNumerical() || this in listOf('I', 'O', 'Q')
 private fun Char.transliterate(transliterationMap: Map<Char, Int>) = transliterationMap[this]
