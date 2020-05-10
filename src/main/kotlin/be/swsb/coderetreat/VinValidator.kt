@@ -43,27 +43,19 @@ private fun String.containsIllegalCharacters() = this.any { it.isIllegalCharacte
 private fun Char.isAlphaNumerical() = "[A-Z0-9]*".toRegex().matches("$this")
 private fun Char.isNotAlphaNumerical() = !this.isAlphaNumerical()
 private fun Char.isIllegalCharacter() = this.isNotAlphaNumerical() || this in listOf('I', 'O', 'Q')
-private fun Char.transliterate(): Int {
-    if (this == 'A' || this == 'J') {
-        return 1
-    } else if (this == 'B' || this == 'K' || this == 'S') {
-        return 2
-    } else if (this == 'C' || this == 'L' || this == 'T') {
-        return 3
-    } else if (this == 'D' || this == 'M' || this == 'U') {
-        return 4
-    } else if (this == 'E' || this == 'N' || this == 'V') {
-        return 5
-    } else if (this == 'F' || this == 'W') {
-        return 6
-    } else if (this == 'G' || this == 'P' || this == 'X') {
-        return 7
-    } else if (this == 'H' || this == 'Y') {
-        return 8
-    } else if (this == 'R' || this == 'Z') {
-        return 9
-    } else if (Integer.valueOf(Character.getNumericValue(this)) != null) { //hacky but works
-        return Character.getNumericValue(this)
+private fun Char.transliterate(): Int? {
+    return when {
+        this in listOf('A','J') -> 1
+        this in listOf('B','K','S') -> 2
+        this in listOf('C','L','T') -> 3
+        this in listOf('D','M','U') -> 4
+        this in listOf('E','N','V') -> 5
+        this in listOf('F','W') -> 6
+        this in listOf('G','P','X') -> 7
+        this in listOf('H','Y') -> 8
+        this in listOf('R','Z') -> 9
+        this.isDigit() -> this.numericValue()
+        else -> null
     }
-    return -1
 }
+private fun Char.numericValue() = Character.getNumericValue(this).let { if(it < 0) null else it }
