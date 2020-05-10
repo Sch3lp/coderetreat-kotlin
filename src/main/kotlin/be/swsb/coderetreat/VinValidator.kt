@@ -9,9 +9,7 @@ object VinValidator {
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
-        if (vinToValidate == null || vinToValidate.isBlank()) {
-            return Optional.of(ValidationError.from("VIN_MANDATORY"))
-        }
+        if (vinToValidate.isNullOrBlank()) return Optional.of(ValidationError.from("VIN_MANDATORY"))
         val cleanedUpVin = vinStrippedOfDashesAndBlanks(vinToValidate)
         if (cleanedUpVin.length != 17) {
             return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
