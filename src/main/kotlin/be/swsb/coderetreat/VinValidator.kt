@@ -9,7 +9,7 @@ object VinValidator {
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
-        val cleanedUpVin = vinStrippedOfDashesAndBlanks(vinToValidate) ?: return Optional.of(ValidationError.from("VIN_MANDATORY"))
+        val cleanedUpVin = vinToValidate.strippedOfDashesBlanksAndUppercased() ?: return Optional.of(ValidationError.from("VIN_MANDATORY"))
         if (cleanedUpVin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         if (cleanedUpVin.containsIllegalCharacters()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
@@ -38,12 +38,6 @@ object VinValidator {
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
 
-    private fun vinStrippedOfDashesAndBlanks(value: String?) = value
-            ?.replace("-".toRegex(), "")
-            ?.replace(" ".toRegex(), "")
-            ?.toUpperCase()
-            ?.ifBlank { null }
-
     private fun transliterate(check: Char): Int {
         if (check == 'A' || check == 'J') {
             return 1
@@ -70,6 +64,11 @@ object VinValidator {
     }
 }
 
+private fun String?.strippedOfDashesBlanksAndUppercased() = this
+        ?.replace("-".toRegex(), "")
+        ?.replace(" ".toRegex(), "")
+        ?.toUpperCase()
+        ?.ifBlank { null }
 private fun String.containsIllegalCharacters() = this.any { it.isIllegalCharacter() }
 private fun Char.isAlphaNumerical() = "[A-Z0-9]*".toRegex().matches("$this")
 private fun Char.isNotAlphaNumerical() = !this.isAlphaNumerical()
