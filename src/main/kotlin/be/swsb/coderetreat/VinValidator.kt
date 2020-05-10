@@ -16,7 +16,7 @@ object VinValidator {
         if (cleanedUpVin.length != 17) {
             return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         }
-        if (cleanedUpVin.any { isIllegalCharacter(it) }) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
+        if (cleanedUpVin.containsIllegalCharacters()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
         var sum = 0
         for (i in 0..16) {
@@ -42,14 +42,6 @@ object VinValidator {
             Optional.empty<ValidationError>()
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
-
-    private fun isIllegalCharacter(c: Char) = isNotAlphaNumerical(c) || isIOQ(c)
-
-    private fun isNotAlphaNumerical(c: Char) = !isAlphaNumerical(c)
-
-    private fun isAlphaNumerical(c: Char) = "[A-Z0-9]*".toRegex().matches("$c")
-
-    private fun isIOQ(c: Char) = c == 'I' || c == 'O' || c == 'Q'
 
     private fun vinStrippedOfDashesAndBlanks(value: String) = value
             .replace("-".toRegex(), "")
@@ -81,3 +73,8 @@ object VinValidator {
         return -1
     }
 }
+
+private fun String.containsIllegalCharacters() = this.any { it.isIllegalCharacter() }
+private fun Char.isAlphaNumerical() = "[A-Z0-9]*".toRegex().matches("$this")
+private fun Char.isNotAlphaNumerical() = !this.isAlphaNumerical()
+private fun Char.isIllegalCharacter() = this.isNotAlphaNumerical() || this in listOf('I','O','Q')
