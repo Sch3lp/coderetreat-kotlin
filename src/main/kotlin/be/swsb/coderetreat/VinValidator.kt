@@ -14,11 +14,9 @@ object VinValidator {
         if (cleanedUpVin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         if (cleanedUpVin.containsIllegalCharacters()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
-        var sum = 0
-        for (i in 0..16) {
-            val c = cleanedUpVin[i]
+        var sum = cleanedUpVin.foldIndexed(0) { i, acc, c ->
             val value = actualMap[c] ?: 0
-            sum = sum + WEIGHTS[i] * value
+            acc + WEIGHTS[i] * value
         }
         // check digit
         sum = sum % 11
