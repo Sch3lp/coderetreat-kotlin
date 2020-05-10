@@ -30,7 +30,7 @@ object VinValidator {
             } else if (Character.isDigit(c)) {
                 value = c - '0'
             } else {    // illegal character
-                return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
+                value = 0
             }
             sum = sum + WEIGHTS[i] * value
         }
@@ -45,7 +45,13 @@ object VinValidator {
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
 
-    private fun isIllegalCharacter(c: Char) = c == 'I' || c == 'O' || c == 'Q'
+    private fun isIllegalCharacter(c: Char) = isNotAlphaNumerical(c) || isIOQ(c)
+
+    private fun isNotAlphaNumerical(c: Char) = !isAlphaNumerical(c)
+
+    private fun isAlphaNumerical(c: Char) = "[A-Z0-9]*".toRegex().matches("$c")
+
+    private fun isIOQ(c: Char) = c == 'I' || c == 'O' || c == 'Q'
 
     private fun vinStrippedOfDashesAndBlanks(value: String) = value
             .replace("-".toRegex(), "")
