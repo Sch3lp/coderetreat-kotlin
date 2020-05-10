@@ -9,11 +9,8 @@ object VinValidator {
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
-        if (vinToValidate.isNullOrBlank()) return Optional.of(ValidationError.from("VIN_MANDATORY"))
-        val cleanedUpVin = vinStrippedOfDashesAndBlanks(vinToValidate)
-        if (cleanedUpVin.length != 17) {
-            return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
-        }
+        val cleanedUpVin = vinStrippedOfDashesAndBlanks(vinToValidate) ?: return Optional.of(ValidationError.from("VIN_MANDATORY"))
+        if (cleanedUpVin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         if (cleanedUpVin.containsIllegalCharacters()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
         var sum = 0
@@ -41,10 +38,11 @@ object VinValidator {
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
 
-    private fun vinStrippedOfDashesAndBlanks(value: String) = value
-            .replace("-".toRegex(), "")
-            .replace(" ".toRegex(), "")
-            .toUpperCase()
+    private fun vinStrippedOfDashesAndBlanks(value: String?) = value
+            ?.replace("-".toRegex(), "")
+            ?.replace(" ".toRegex(), "")
+            ?.toUpperCase()
+            ?.ifBlank { null }
 
     private fun transliterate(check: Char): Int {
         if (check == 'A' || check == 'J') {
