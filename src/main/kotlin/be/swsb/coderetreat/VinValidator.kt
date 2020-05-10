@@ -14,58 +14,56 @@ object VinValidator {
                 ?: return Optional.of(ValidationError.from("VIN_MANDATORY"))
         if (cleanedUpVin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         if (cleanedUpVin.containsIllegalCharacters()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
-        if (hasInvalidChecksum(cleanedUpVin)) return Optional.of(ValidationError.from("VIN_ILLEGAL"))
+        if (cleanedUpVin.hasInvalidChecksum(actualMap, weights)) return Optional.of(ValidationError.from("VIN_ILLEGAL"))
         return Optional.empty<ValidationError>()
-    }
-
-    private fun hasInvalidChecksum(cleanedUpVin: String): Boolean {
-        val checkSum = cleanedUpVin.foldIndexed(0) { i, acc, c ->
-            val value = actualMap[c] ?: 0
-            acc + weights[i] * value
-        }
-        val mod = checkSum % 11
-        return !isValidChecksum(mod, cleanedUpVin.getCheckCharacter())
-    }
-
-    private fun isValidChecksum(mod: Int, checkCharacter: Char) =
-            isValidSpecialCase(mod, checkCharacter) || isValidTransliteration(mod, checkCharacter)
-    private fun isValidSpecialCase(mod: Int, checkCharacter: Char) = mod == 10 && checkCharacter == 'X'
-    private fun isValidTransliteration(mod: Int, checkCharacter: Char) = mod == transliterate(checkCharacter)
-
-    private fun transliterate(check: Char): Int {
-        if (check == 'A' || check == 'J') {
-            return 1
-        } else if (check == 'B' || check == 'K' || check == 'S') {
-            return 2
-        } else if (check == 'C' || check == 'L' || check == 'T') {
-            return 3
-        } else if (check == 'D' || check == 'M' || check == 'U') {
-            return 4
-        } else if (check == 'E' || check == 'N' || check == 'V') {
-            return 5
-        } else if (check == 'F' || check == 'W') {
-            return 6
-        } else if (check == 'G' || check == 'P' || check == 'X') {
-            return 7
-        } else if (check == 'H' || check == 'Y') {
-            return 8
-        } else if (check == 'R' || check == 'Z') {
-            return 9
-        } else if (Integer.valueOf(Character.getNumericValue(check)) != null) { //hacky but works
-            return Character.getNumericValue(check)
-        }
-        return -1
     }
 }
 
-private fun String.getCheckCharacter() = this[8]
 private fun String?.strippedOfDashesBlanksAndUppercased() = this
         ?.replace("-".toRegex(), "")
         ?.replace(" ".toRegex(), "")
         ?.toUpperCase()
         ?.ifBlank { null }
+private fun String.hasInvalidChecksum(actualMap: Map<Char, Int>, weights: IntArray): Boolean {
+    fun isValidSpecialCase(mod: Int, checkCharacter: Char) = mod == 10 && checkCharacter == 'X'
+    fun isValidTransliteration(mod: Int, checkCharacter: Char) = mod == checkCharacter.transliterate()
+    fun isValidChecksum(mod: Int, checkCharacter: Char) =
+            isValidSpecialCase(mod, checkCharacter) || isValidTransliteration(mod, checkCharacter)
+
+    val checkSum = this.foldIndexed(0) { i, acc, c ->
+        val value = actualMap[c] ?: 0
+        acc + weights[i] * value
+    }
+    val mod = checkSum % 11
+    return !isValidChecksum(mod, this.getCheckCharacter())
+}
+private fun String.getCheckCharacter() = this[8]
 
 private fun String.containsIllegalCharacters() = this.any { it.isIllegalCharacter() }
 private fun Char.isAlphaNumerical() = "[A-Z0-9]*".toRegex().matches("$this")
 private fun Char.isNotAlphaNumerical() = !this.isAlphaNumerical()
 private fun Char.isIllegalCharacter() = this.isNotAlphaNumerical() || this in listOf('I', 'O', 'Q')
+private fun Char.transliterate(): Int {
+    if (this == 'A' || this == 'J') {
+        return 1
+    } else if (this == 'B' || this == 'K' || this == 'S') {
+        return 2
+    } else if (this == 'C' || this == 'L' || this == 'T') {
+        return 3
+    } else if (this == 'D' || this == 'M' || this == 'U') {
+        return 4
+    } else if (this == 'E' || this == 'N' || this == 'V') {
+        return 5
+    } else if (this == 'F' || this == 'W') {
+        return 6
+    } else if (this == 'G' || this == 'P' || this == 'X') {
+        return 7
+    } else if (this == 'H' || this == 'Y') {
+        return 8
+    } else if (this == 'R' || this == 'Z') {
+        return 9
+    } else if (Integer.valueOf(Character.getNumericValue(this)) != null) { //hacky but works
+        return Character.getNumericValue(this)
+    }
+    return -1
+}
