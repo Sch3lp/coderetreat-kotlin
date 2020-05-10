@@ -15,12 +15,13 @@ object VinValidator {
         if (vin.length != 17) {
             return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         }
+
         var sum = 0
         for (i in 0..16) {
             val c = vin[i]
             var value: Int
             // Only accept the 26 letters of the alphabet
-            if (c >= 'A' && c <= 'Z') {
+            if (c in 'A'..'Z') {
                 value = VALUES[c - 'A']
                 if (value == 0) {
                     return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
