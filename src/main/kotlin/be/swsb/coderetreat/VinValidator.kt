@@ -4,8 +4,9 @@ import java.util.*
 
 
 object VinValidator {
-    //private val ALPHA  =                    A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z
-    private val alphabetValueMap = intArrayOf(1, 2, 3, 4, 5, 6, 7, 8, 0, 1, 2, 3, 4, 5, 0, 7, 0, 9, 2, 3, 4, 5, 6, 7, 8, 9)
+    private val actualMap = listOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
+                       .zip(listOf( 1,   2,   3,   4,   5,   6,   7,   8,   0,   1,   2,   3,   4,   5,   0,   7,   0,   9,   2,   3,   4,   5,   6,   7,   8,   9,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9))
+                       .toMap()
     private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
@@ -16,15 +17,7 @@ object VinValidator {
         var sum = 0
         for (i in 0..16) {
             val c = cleanedUpVin[i]
-            var value: Int
-            // Only accept the 26 letters of the alphabet
-            if (c in 'A'..'Z') {
-                value = alphabetValueMap[c - 'A']
-            } else if (Character.isDigit(c)) {
-                value = c - '0'
-            } else {    // illegal character
-                value = 0
-            }
+            val value = actualMap[c] ?: 0
             sum = sum + WEIGHTS[i] * value
         }
         // check digit
