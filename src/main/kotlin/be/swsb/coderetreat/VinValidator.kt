@@ -21,12 +21,12 @@ object VinValidator {
         for (i in 0..16) {
             val c = cleanedUpVin[i]
             var value: Int
+            if (isIllegalCharacter(c)) {
+                return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
+            }
             // Only accept the 26 letters of the alphabet
             if (c in 'A'..'Z') {
                 value = alphabetValueMap[c - 'A']
-                if (value == 0) {
-                    return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
-                }
             } else if (Character.isDigit(c)) {
                 value = c - '0'
             } else {    // illegal character
@@ -44,6 +44,8 @@ object VinValidator {
             Optional.empty<ValidationError>()
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
+
+    private fun isIllegalCharacter(c: Char) = c == 'I' || c == 'O' || c == 'Q'
 
     private fun vinStrippedOfDashesAndBlanks(value: String) = value
             .replace("-".toRegex(), "")
