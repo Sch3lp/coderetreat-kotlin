@@ -7,24 +7,24 @@ object VinValidator {
     private val actualMap = listOf('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9')
                        .zip(listOf( 1,   2,   3,   4,   5,   6,   7,   8,   0,   1,   2,   3,   4,   5,   0,   7,   0,   9,   2,   3,   4,   5,   6,   7,   8,   9,   0,   1,   2,   3,   4,   5,   6,   7,   8,   9))
                        .toMap()
-    private val WEIGHTS = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
+    private val weights = intArrayOf(8, 7, 6, 5, 4, 3, 2, 10, 0, 9, 8, 7, 6, 5, 4, 3, 2)
 
     fun validate(vinToValidate: String?): Optional<ValidationError> {
         val cleanedUpVin = vinToValidate.strippedOfDashesBlanksAndUppercased() ?: return Optional.of(ValidationError.from("VIN_MANDATORY"))
         if (cleanedUpVin.length != 17) return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         if (cleanedUpVin.containsIllegalCharacters()) return Optional.of(ValidationError.from("VIN_ILLEGAL_CHARACTER"))
 
-        var sum = cleanedUpVin.foldIndexed(0) { i, acc, c ->
+        var checkSum = cleanedUpVin.foldIndexed(0) { i, acc, c ->
             val value = actualMap[c] ?: 0
-            acc + WEIGHTS[i] * value
+            acc + weights[i] * value
         }
         // check digit
-        sum = sum % 11
-        val check = cleanedUpVin[8]
-        if (sum == 10 && check == 'X') {
+        checkSum = checkSum % 11
+        val checkCharacter = cleanedUpVin[8]
+        if (checkSum == 10 && checkCharacter == 'X') {
             return Optional.empty<ValidationError>()
         }
-        return if (sum == transliterate(check)) {
+        return if (checkSum == transliterate(checkCharacter)) {
             Optional.empty<ValidationError>()
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
