@@ -11,14 +11,14 @@ object VinValidator {
         if (vinToValidate == null || vinToValidate.isBlank()) {
             return Optional.of(ValidationError.from("VIN_MANDATORY"))
         }
-        val vin = cleanUpVin(vinToValidate)
-        if (vin.length != 17) {
+        val cleanedUpVin = vinStrippedOfDashesAndBlanks(vinToValidate)
+        if (cleanedUpVin.length != 17) {
             return Optional.of(ValidationError.from("VIN_MAX_LENGTH"))
         }
 
         var sum = 0
         for (i in 0..16) {
-            val c = vin[i]
+            val c = cleanedUpVin[i]
             var value: Int
             // Only accept the 26 letters of the alphabet
             if (c in 'A'..'Z') {
@@ -35,7 +35,7 @@ object VinValidator {
         }
         // check digit
         sum = sum % 11
-        val check = vin[8]
+        val check = cleanedUpVin[8]
         if (sum == 10 && check == 'X') {
             return Optional.empty<ValidationError>()
         }
@@ -44,7 +44,7 @@ object VinValidator {
         } else Optional.of(ValidationError.from("VIN_ILLEGAL"))
     }
 
-    private fun cleanUpVin(value: String) = value
+    private fun vinStrippedOfDashesAndBlanks(value: String) = value
             .replace("-".toRegex(), "")
             .replace(" ".toRegex(), "")
             .toUpperCase()
