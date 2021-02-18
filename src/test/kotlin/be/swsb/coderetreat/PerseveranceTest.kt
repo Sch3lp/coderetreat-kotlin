@@ -1,8 +1,7 @@
 package be.swsb.coderetreat
 
 import be.swsb.coderetreat.FacingDirection.*
-import be.swsb.coderetreat.MarsRoverCommand.Forwards
-import be.swsb.coderetreat.MarsRoverCommand.Left
+import be.swsb.coderetreat.MarsRoverCommand.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -81,7 +80,7 @@ class PerseveranceTest {
     }
 
     @Nested
-    inner class RotatingLeft {
+    inner class Rotating {
         @Test
         internal fun `Perseverance can receive a left command, and change direction`() {
             land(Position(0, 0), North)
@@ -89,6 +88,15 @@ class PerseveranceTest {
                 .receive(Left).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), South)) }
                 .receive(Left).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), East)) }
                 .receive(Left).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), North)) }
+        }
+
+        @Test
+        internal fun `Perseverance can receive a right command, and change direction`() {
+            land(Position(0, 0), North)
+                .receive(Right).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), East)) }
+                .receive(Right).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), South)) }
+                .receive(Right).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), West)) }
+                .receive(Right).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), North)) }
         }
     }
 }
@@ -98,10 +106,16 @@ data class Perseverance(
     val facing: FacingDirection,
 ) {
     fun receive(command: MarsRoverCommand): Perseverance {
-        if (command == Forwards) {
-            return moveForwards()
-        } else {
-            return rotateLeft()
+        return when (command) {
+            Forwards -> {
+                moveForwards()
+            }
+            Left -> {
+                rotateLeft()
+            }
+            Right -> {
+                rotateRight()
+            }
         }
     }
 
@@ -117,6 +131,10 @@ data class Perseverance(
         val newDirection = this.facing.counterClockwise()
         return copy(facing = newDirection)
     }
+    private fun rotateRight(): Perseverance {
+        val newDirection = this.facing.clockwise()
+        return copy(facing = newDirection)
+    }
 }
 
 data class Position(private val x: Int, private val y: Int) {
@@ -128,7 +146,8 @@ data class Position(private val x: Int, private val y: Int) {
 
 enum class MarsRoverCommand {
     Forwards,
-    Left
+    Left,
+    Right
 }
 
 enum class FacingDirection {
@@ -137,6 +156,13 @@ enum class FacingDirection {
     South,
     West,
     ;
+
+    fun clockwise() = when (this) {
+        North -> East
+        East -> South
+        South -> West
+        West -> North
+    }
 
     fun counterClockwise() = when (this) {
         North -> West
