@@ -1,5 +1,13 @@
 # Mars Rover Kata
 
+## Improvements for next time
+* [ ] Deliberately switch driver and navigator (roles)
+* [ ] Kotlin is cool  
+* [ ] .copy to create immutable objects with 1 property changed  
+* [ ] Next time go quicker for immutability  
+* [ ] Use private properties where possible  
+* [ ] Use .also in between a chain to assert states
+
 ## Rover Basics
 * [ ] A Rover has a position and a direction it's facing
 * [ ] A Rover can receive a "forwards" command, changing its position
