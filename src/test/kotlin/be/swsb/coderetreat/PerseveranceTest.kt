@@ -64,7 +64,14 @@ class PerseveranceTest {
 
     @Test
     fun `Perseverance can receive a forwards command twice, while facing West and move down the X axis`() {
+        val landedPerseverance = land(Position(0, 0), West)
 
+        val updatedRover: Perseverance = landedPerseverance
+            .receive(Forwards)
+            .receive(Forwards)
+
+        assertThat(updatedRover)
+            .isEqualTo(Perseverance(pos = Position(x = -2, y = 0), facing = West))
     }
 
 }
@@ -75,28 +82,19 @@ data class Perseverance(
 ) {
     fun receive(command: MarsRoverCommand): Perseverance {
         return when (facing) {
-            North -> {
-                copy(pos = moveUpTheYAxis())
-            }
-            South -> {
-                copy(pos = moveDownTheYAxis())
-            }
-            East -> {
-                copy(pos = moveUpTheXAxis())
-            }
-            else -> this
+            North -> copy(pos = pos.moveUpTheYAxis(1))
+            South -> copy(pos = pos.moveDownTheYAxis(1))
+            East -> copy(pos = pos.moveUpTheXAxis(1))
+            West -> copy(pos = pos.moveDownTheXAxis(1))
         }
     }
-
-    private fun moveUpTheYAxis() = this.pos.moveUpTheYAxis(1)
-    private fun moveDownTheYAxis() = this.pos.moveDownTheYAxis(1)
-    private fun moveUpTheXAxis() = this.pos.moveUpTheXAxis(1)
 }
 
-data class Position(val x: Int, val y: Int) {
+data class Position(private val x: Int, private val y: Int) {
     fun moveUpTheYAxis(step: Int) = this.copy(y = this.y + step)
     fun moveDownTheYAxis(step: Int) = this.copy(y = this.y - step)
     fun moveUpTheXAxis(step: Int) = this.copy(x = this.x + step)
+    fun moveDownTheXAxis(step: Int) = this.copy(x = this.x - step)
 }
 
 enum class MarsRoverCommand {
