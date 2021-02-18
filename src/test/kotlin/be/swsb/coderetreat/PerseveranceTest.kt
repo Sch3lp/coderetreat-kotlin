@@ -3,6 +3,7 @@ package be.swsb.coderetreat
 import be.swsb.coderetreat.FacingDirection.*
 import be.swsb.coderetreat.MarsRoverCommand.Forwards
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
 
@@ -16,62 +17,66 @@ class PerseveranceTest {
             .isEqualTo(Perseverance(pos = Position(0, 0), facing = North))
     }
 
-    @Test
-    fun `Perseverance can receive a forwards command and move towards a new position`() {
-        val landedPerseverance = land(Position(0, 0), North)
+    @Nested
+    inner class MovingForwards {
 
-        val updatedRover = landedPerseverance.receive(Forwards)
+        @Test
+        fun `Perseverance can receive a forwards command and move towards a new position`() {
+            val landedPerseverance = land(Position(0, 0), North)
 
-        assertThat(updatedRover)
-            .isEqualTo(Perseverance(pos = Position(x = 0, y = 1), facing = North))
-    }
+            val updatedRover = landedPerseverance.receive(Forwards)
 
-    @Test
-    fun `Perseverance can receive a forwards command twice, while facing North and move up the Y axis`() {
-        val landedPerseverance = land(Position(0, 0), North)
+            assertThat(updatedRover)
+                .isEqualTo(Perseverance(pos = Position(x = 0, y = 1), facing = North))
+        }
 
-        val updatedRover: Perseverance = landedPerseverance
-            .receive(Forwards)
-            .receive(Forwards)
+        @Test
+        fun `Perseverance can receive a forwards command twice, while facing North and move up the Y axis`() {
+            val landedPerseverance = land(Position(0, 0), North)
 
-        assertThat(updatedRover)
-            .isEqualTo(Perseverance(pos = Position(x = 0, y = 2), facing = North))
-    }
+            val updatedRover: Perseverance = landedPerseverance
+                .receive(Forwards)
+                .receive(Forwards)
 
-    @Test
-    fun `Perseverance can receive a forwards command twice, while facing South and move down the Y axis`() {
-        val landedPerseverance = land(Position(0, 0), South)
+            assertThat(updatedRover)
+                .isEqualTo(Perseverance(pos = Position(x = 0, y = 2), facing = North))
+        }
 
-        val updatedRover: Perseverance = landedPerseverance
-            .receive(Forwards)
-            .receive(Forwards)
+        @Test
+        fun `Perseverance can receive a forwards command twice, while facing South and move down the Y axis`() {
+            val landedPerseverance = land(Position(0, 0), South)
 
-        assertThat(updatedRover)
-            .isEqualTo(Perseverance(pos = Position(x = 0, y = -2), facing = South))
-    }
+            val updatedRover: Perseverance = landedPerseverance
+                .receive(Forwards)
+                .receive(Forwards)
 
-    @Test
-    fun `Perseverance can receive a forwards command twice, while facing East and move up the X axis`() {
-        val landedPerseverance = land(Position(0, 0), East)
+            assertThat(updatedRover)
+                .isEqualTo(Perseverance(pos = Position(x = 0, y = -2), facing = South))
+        }
 
-        val updatedRover: Perseverance = landedPerseverance
-            .receive(Forwards)
-            .receive(Forwards)
+        @Test
+        fun `Perseverance can receive a forwards command twice, while facing East and move up the X axis`() {
+            val landedPerseverance = land(Position(0, 0), East)
 
-        assertThat(updatedRover)
-            .isEqualTo(Perseverance(pos = Position(x = 2, y = 0), facing = East))
-    }
+            val updatedRover: Perseverance = landedPerseverance
+                .receive(Forwards)
+                .receive(Forwards)
 
-    @Test
-    fun `Perseverance can receive a forwards command twice, while facing West and move down the X axis`() {
-        val landedPerseverance = land(Position(0, 0), West)
+            assertThat(updatedRover)
+                .isEqualTo(Perseverance(pos = Position(x = 2, y = 0), facing = East))
+        }
 
-        val updatedRover: Perseverance = landedPerseverance
-            .receive(Forwards)
-            .receive(Forwards)
+        @Test
+        fun `Perseverance can receive a forwards command twice, while facing West and move down the X axis`() {
+            val landedPerseverance = land(Position(0, 0), West)
 
-        assertThat(updatedRover)
-            .isEqualTo(Perseverance(pos = Position(x = -2, y = 0), facing = West))
+            val updatedRover: Perseverance = landedPerseverance
+                .receive(Forwards)
+                .receive(Forwards)
+
+            assertThat(updatedRover)
+                .isEqualTo(Perseverance(pos = Position(x = -2, y = 0), facing = West))
+        }
     }
 
 }

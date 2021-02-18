@@ -2,9 +2,9 @@
 
 ## Rover Basics
 * [x] A Rover has a position and a direction it's facing
-* [ ] A Rover can receive a "forwards" command, changing its position
-* [ ] A Rover can receive a "backwards" command, changing its position
+* [x] A Rover can receive a "forwards" command, changing its position
 * [ ] A Rover can receive a "left" command, turning its direction
+* [ ] A Rover can receive a "backwards" command, changing its position
 * [ ] A Rover can receive a "right" command, turning its direction
 
 ## Rover Map awareness
