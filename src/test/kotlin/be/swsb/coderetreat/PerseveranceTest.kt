@@ -1,7 +1,9 @@
 package be.swsb.coderetreat
 
 import be.swsb.coderetreat.FacingDirection.*
-import be.swsb.coderetreat.MarsRoverCommand.*
+import be.swsb.coderetreat.MarsRoverCommand.RotateCommand.*
+import be.swsb.coderetreat.MarsRoverCommand.MoveCommand.*
+import be.swsb.coderetreat.MarsRoverCommand.RotateCommand
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -110,11 +112,8 @@ data class Perseverance(
             Forwards -> {
                 moveForwards()
             }
-            Left -> {
-                rotateLeft()
-            }
-            Right -> {
-                rotateRight()
+            is RotateCommand -> {
+                rotate(command)
             }
         }
     }
@@ -127,14 +126,13 @@ data class Perseverance(
     }
 
     // maybe try passing Perseverance as receiver to FacingDirection
-    private fun rotateLeft(): Perseverance {
-        val newDirection = this.facing.counterClockwise()
-        return copy(facing = newDirection)
+    private fun rotate(rotateCommand: RotateCommand): Perseverance {
+        return when (rotateCommand) {
+            Right -> copy(facing = facing.clockwise())
+            Left -> copy(facing = facing.counterClockwise())
+        }
     }
-    private fun rotateRight(): Perseverance {
-        val newDirection = this.facing.clockwise()
-        return copy(facing = newDirection)
-    }
+
 }
 
 data class Position(private val x: Int, private val y: Int) {
@@ -144,10 +142,15 @@ data class Position(private val x: Int, private val y: Int) {
     fun moveDownTheXAxis(step: Int) = this.copy(x = this.x - step)
 }
 
-enum class MarsRoverCommand {
-    Forwards,
-    Left,
-    Right
+
+sealed class MarsRoverCommand {
+    sealed class MoveCommand : MarsRoverCommand() {
+        object Forwards: MoveCommand()
+    }
+    sealed class RotateCommand : MarsRoverCommand() {
+        object Left: RotateCommand()
+        object Right: RotateCommand()
+    }
 }
 
 enum class FacingDirection {
