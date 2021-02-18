@@ -1,6 +1,7 @@
 package be.swsb.coderetreat
 
 import be.swsb.coderetreat.FacingDirection.*
+import be.swsb.coderetreat.MarsRoverCommand.MoveCommand
 import be.swsb.coderetreat.MarsRoverCommand.RotateCommand.*
 import be.swsb.coderetreat.MarsRoverCommand.MoveCommand.*
 import be.swsb.coderetreat.MarsRoverCommand.RotateCommand
@@ -13,6 +14,19 @@ class PerseveranceTest {
 
     @Test
     fun `Perseverance lands on a position and a direction that it's facing towards`() {
+        val landedPerseverance = land(Position(0, 0), North)
+
+        landedPerseverance
+            .receive(Left).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), West)) }
+            .receive(Forwards).also { assertThat(it).isEqualTo(Perseverance(Position(-1, 0), West)) }
+            .receive(Forwards).also { assertThat(it).isEqualTo(Perseverance(Position(-2, 0), West)) }
+            .receive(Right).also { assertThat(it).isEqualTo(Perseverance(Position(-2, 0), North)) }
+            .receive(Backwards).also { assertThat(it).isEqualTo(Perseverance(Position(-2, -1), North)) }
+            .receive(Backwards).also { assertThat(it).isEqualTo(Perseverance(Position(-2, -2), North)) }
+    }
+
+    @Test
+    fun `Perseverance can receive rotate and move commands and explore Mars`() {
         val landedPerseverance = land(Position(0, 0), North)
 
         assertThat(landedPerseverance)
@@ -143,29 +157,20 @@ class PerseveranceTest {
                 .receive(Right).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), North)) }
         }
     }
-
-    @Test
-    internal fun `do stuff with direction`() {
-        North.clockwise()
-    }
 }
 
 data class Perseverance(
     val pos: Position,
     val facing: FacingDirection,
 ) {
-    fun receive(command: MarsRoverCommand): Perseverance {
-        return when (command) {
-            Forwards -> {
-                moveForwards()
-            }
-            Backwards -> {
-                moveBackwards()
-            }
-            is RotateCommand -> {
-                rotate(command)
-            }
-        }
+    fun receive(command: MarsRoverCommand) = when (command) {
+        is MoveCommand -> move(command)
+        is RotateCommand -> rotate(command)
+    }
+
+    private fun move(cmd: MoveCommand) = when(cmd) {
+        Forwards -> moveForwards()
+        Backwards -> moveBackwards()
     }
 
     private fun moveForwards() = when (facing) {
@@ -181,11 +186,9 @@ data class Perseverance(
         West -> copy(pos = pos.moveUpTheXAxis(1))
     }
 
-    private fun rotate(rotateCommand: RotateCommand): Perseverance {
-        return when (rotateCommand) {
-            Right -> copy(facing = facing.clockwise())
-            Left -> copy(facing = facing.counterClockwise())
-        }
+    private fun rotate(rotateCommand: RotateCommand) = when (rotateCommand) {
+        Right -> copy(facing = facing.clockwise())
+        Left -> copy(facing = facing.counterClockwise())
     }
 
 }
