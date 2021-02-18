@@ -23,16 +23,6 @@ class PerseveranceTest {
     inner class MovingForwards {
 
         @Test
-        fun `Perseverance can receive a forwards command and move towards a new position`() {
-            val landedPerseverance = land(Position(0, 0), North)
-
-            val updatedRover = landedPerseverance.receive(Forwards)
-
-            assertThat(updatedRover)
-                .isEqualTo(Perseverance(pos = Position(x = 0, y = 1), facing = North))
-        }
-
-        @Test
         fun `Perseverance can receive a forwards command twice, while facing North and move up the Y axis`() {
             val landedPerseverance = land(Position(0, 0), North)
 
@@ -82,6 +72,58 @@ class PerseveranceTest {
     }
 
     @Nested
+    inner class MovingBackwards {
+
+        @Test
+        fun `Perseverance can receive a backwards command twice, while facing North and move down the Y axis`() {
+            val landedPerseverance = land(Position(0, 0), North)
+
+            val updatedRover: Perseverance = landedPerseverance
+                .receive(Backwards)
+                .receive(Backwards)
+
+            assertThat(updatedRover)
+                .isEqualTo(Perseverance(pos = Position(x = 0, y = -2), facing = North))
+        }
+
+        @Test
+        fun `Perseverance can receive a backwards command twice, while facing South and move up the Y axis`() {
+            val landedPerseverance = land(Position(0, 0), South)
+
+            val updatedRover: Perseverance = landedPerseverance
+                .receive(Backwards)
+                .receive(Backwards)
+
+            assertThat(updatedRover)
+                .isEqualTo(Perseverance(pos = Position(x = 0, y = 2), facing = South))
+        }
+
+        @Test
+        fun `Perseverance can receive a backwards command twice, while facing East and move down the X axis`() {
+            val landedPerseverance = land(Position(0, 0), East)
+
+            val updatedRover: Perseverance = landedPerseverance
+                .receive(Backwards)
+                .receive(Backwards)
+
+            assertThat(updatedRover)
+                .isEqualTo(Perseverance(pos = Position(x = -2, y = 0), facing = East))
+        }
+
+        @Test
+        fun `Perseverance can receive a backwards command twice, while facing West and move up the X axis`() {
+            val landedPerseverance = land(Position(0, 0), West)
+
+            val updatedRover: Perseverance = landedPerseverance
+                .receive(Backwards)
+                .receive(Backwards)
+
+            assertThat(updatedRover)
+                .isEqualTo(Perseverance(pos = Position(x = 2, y = 0), facing = West))
+        }
+    }
+
+    @Nested
     inner class Rotating {
         @Test
         internal fun `Perseverance can receive a left command, and change direction`() {
@@ -101,6 +143,11 @@ class PerseveranceTest {
                 .receive(Right).also { assertThat(it).isEqualTo(Perseverance(Position(0, 0), North)) }
         }
     }
+
+    @Test
+    internal fun `do stuff with direction`() {
+        North.clockwise()
+    }
 }
 
 data class Perseverance(
@@ -111,6 +158,9 @@ data class Perseverance(
         return when (command) {
             Forwards -> {
                 moveForwards()
+            }
+            Backwards -> {
+                moveBackwards()
             }
             is RotateCommand -> {
                 rotate(command)
@@ -124,8 +174,13 @@ data class Perseverance(
         East -> copy(pos = pos.moveUpTheXAxis(1))
         West -> copy(pos = pos.moveDownTheXAxis(1))
     }
+    private fun moveBackwards() = when (facing) {
+        North -> copy(pos = pos.moveDownTheYAxis(1))
+        South -> copy(pos = pos.moveUpTheYAxis(1))
+        East -> copy(pos = pos.moveDownTheXAxis(1))
+        West -> copy(pos = pos.moveUpTheXAxis(1))
+    }
 
-    // maybe try passing Perseverance as receiver to FacingDirection
     private fun rotate(rotateCommand: RotateCommand): Perseverance {
         return when (rotateCommand) {
             Right -> copy(facing = facing.clockwise())
@@ -146,6 +201,7 @@ data class Position(private val x: Int, private val y: Int) {
 sealed class MarsRoverCommand {
     sealed class MoveCommand : MarsRoverCommand() {
         object Forwards: MoveCommand()
+        object Backwards: MoveCommand()
     }
     sealed class RotateCommand : MarsRoverCommand() {
         object Left: RotateCommand()
