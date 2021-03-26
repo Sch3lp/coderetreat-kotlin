@@ -7,6 +7,14 @@ import org.junit.jupiter.api.Test
 
 class RoverTest {
 
+/*
+Rules of Simple Design
+1. Passes tests
+2. Reveals intent
+3. No duplication of concepts
+4. Fewest elements possible
+*/
+
     @Test
     fun `a rover can receive a Position and a Direction to start reporting on it`() {
         val actual = Rover()
@@ -16,7 +24,7 @@ class RoverTest {
 }
 
 
-data class Rover(val position : Position, val direction: Direction)
+data class Rover(val position : Position = at(0,0), val direction: Direction = Direction.North)
 
 data class Position(private val x: Int, private val y: Int) {
     companion object {
