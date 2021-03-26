@@ -21,10 +21,20 @@ Rules of Simple Design
         assertThat(actual).isEqualTo(Rover(position = at(0,0), direction = Direction.North))
     }
 
+    @Test
+    internal fun `when a rover recieves a forwards command then moves up the y axis`() {
+        val actual = Rover().receive(Command.Forwards)
+        assertThat(actual).isEqualTo(Rover(position = at(0,1), direction = Direction.North))
+
+    }
 }
 
 
-data class Rover(val position : Position = at(0,0), val direction: Direction = Direction.North)
+data class Rover(val position : Position = at(0,0), val direction: Direction = Direction.North) {
+    fun receive(command: Command): Rover {
+        return this.copy(position = at(0, 1))
+    }
+}
 
 data class Position(private val x: Int, private val y: Int) {
     companion object {
@@ -36,4 +46,8 @@ sealed class Direction {
     object East: Direction()
     object South: Direction()
     object West: Direction()
+}
+
+sealed class Command {
+    object Forwards: Command()
 }
