@@ -4,6 +4,9 @@ import be.swsb.coderetreat.Command.MoveCommand.Backwards
 import be.swsb.coderetreat.Command.MoveCommand.Forwards
 import be.swsb.coderetreat.Command.RotateCommand.Left
 import be.swsb.coderetreat.Command.RotateCommand.Right
+import be.swsb.coderetreat.Direction.East
+import be.swsb.coderetreat.Direction.South
+import be.swsb.coderetreat.Position.Companion.at
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -14,7 +17,7 @@ class RoverTest {
     @Test
     fun `A Rover can be initiated with a starting position and a starting facing direction`() {
         val initiatedRover = Rover()
-        assertThat(initiatedRover).isEqualTo(Rover(at = Position(0, 0), facing = Direction.North))
+        assertThat(initiatedRover).isEqualTo(Rover(at = at(0, 0), facing = Direction.North))
     }
 
     @Nested
@@ -22,28 +25,28 @@ class RoverTest {
         @Test
         fun `A Rover facing North, moves up the Y axis`() {
             val initiatedRover = Rover().receive(Forwards).receive(Forwards)
-            assertThat(initiatedRover).isEqualTo(Rover(at = Position(0, 2), facing = Direction.North))
+            assertThat(initiatedRover).isEqualTo(Rover(at = at(0, 2), facing = Direction.North))
         }
 
         @Test
         fun `A Rover facing South, moves down the Y axis`() {
-            val initiatedRover = Rover(facing = Direction.South).receive(Forwards)
+            val initiatedRover = Rover(facing = South).receive(Forwards)
                 .receive(Forwards)
-            assertThat(initiatedRover).isEqualTo(Rover(at = Position(0, -2), facing = Direction.South))
+            assertThat(initiatedRover).isEqualTo(Rover(at = at(0, -2), facing = South))
         }
 
         @Test
         fun `A Rover facing West, moves down the X axis`() {
             val initiatedRover = Rover(facing = Direction.West).receive(Forwards)
                 .receive(Forwards)
-            assertThat(initiatedRover).isEqualTo(Rover(at = Position(-2, 0), facing = Direction.West))
+            assertThat(initiatedRover).isEqualTo(Rover(at = at(-2, 0), facing = Direction.West))
         }
 
         @Test
         fun `A Rover facing East, moves up the X axis`() {
-            val initiatedRover = Rover(facing = Direction.East).receive(Forwards)
+            val initiatedRover = Rover(facing = East).receive(Forwards)
                 .receive(Forwards)
-            assertThat(initiatedRover).isEqualTo(Rover(at = Position(2, 0), facing = Direction.East))
+            assertThat(initiatedRover).isEqualTo(Rover(at = at(2, 0), facing = East))
         }
     }
 
@@ -52,28 +55,28 @@ class RoverTest {
         @Test
         fun `A Rover facing North, moves down the Y axis`() {
             val initiatedRover = Rover().receive(Backwards).receive(Backwards)
-            assertThat(initiatedRover).isEqualTo(Rover(at = Position(0, -2), facing = Direction.North))
+            assertThat(initiatedRover).isEqualTo(Rover(at = at(0, -2), facing = Direction.North))
         }
 
         @Test
         fun `A Rover facing South, moves up the Y axis`() {
-            val initiatedRover = Rover(facing = Direction.South).receive(Backwards)
+            val initiatedRover = Rover(facing = South).receive(Backwards)
                 .receive(Backwards)
-            assertThat(initiatedRover).isEqualTo(Rover(at = Position(0, 2), facing = Direction.South))
+            assertThat(initiatedRover).isEqualTo(Rover(at = at(0, 2), facing = South))
         }
 
         @Test
         fun `A Rover facing West, moves up the X axis`() {
             val initiatedRover = Rover(facing = Direction.West).receive(Backwards)
                 .receive(Backwards)
-            assertThat(initiatedRover).isEqualTo(Rover(at = Position(2, 0), facing = Direction.West))
+            assertThat(initiatedRover).isEqualTo(Rover(at = at(2, 0), facing = Direction.West))
         }
 
         @Test
         fun `A Rover facing East, moves down the X axis`() {
-            val initiatedRover = Rover(facing = Direction.East).receive(Backwards)
+            val initiatedRover = Rover(facing = East).receive(Backwards)
                 .receive(Backwards)
-            assertThat(initiatedRover).isEqualTo(Rover(at = Position(-2, 0), facing = Direction.East))
+            assertThat(initiatedRover).isEqualTo(Rover(at = at(-2, 0), facing = East))
         }
     }
 
@@ -81,9 +84,9 @@ class RoverTest {
     inner class ReceivingRight {
         @Test
         fun `A Rover rotates clockwise`() {
-            assertThat(Rover(facing = Direction.North).receive(Right)).isEqualTo(Rover(facing = Direction.East))
-            assertThat(Rover(facing = Direction.East).receive(Right)).isEqualTo(Rover(facing = Direction.South))
-            assertThat(Rover(facing = Direction.South).receive(Right)).isEqualTo(Rover(facing = Direction.West))
+            assertThat(Rover(facing = Direction.North).receive(Right)).isEqualTo(Rover(facing = East))
+            assertThat(Rover(facing = East).receive(Right)).isEqualTo(Rover(facing = South))
+            assertThat(Rover(facing = South).receive(Right)).isEqualTo(Rover(facing = Direction.West))
             assertThat(Rover(facing = Direction.West).receive(Right)).isEqualTo(Rover(facing = Direction.North))
         }
     }
@@ -93,15 +96,27 @@ class RoverTest {
         @Test
         fun `A Rover rotates counter-clockwise`() {
             assertThat(Rover(facing = Direction.North).receive(Left)).isEqualTo(Rover(facing = Direction.West))
-            assertThat(Rover(facing = Direction.West).receive(Left)).isEqualTo(Rover(facing = Direction.South))
-            assertThat(Rover(facing = Direction.South).receive(Left)).isEqualTo(Rover(facing = Direction.East))
-            assertThat(Rover(facing = Direction.East).receive(Left)).isEqualTo(Rover(facing = Direction.North))
+            assertThat(Rover(facing = Direction.West).receive(Left)).isEqualTo(Rover(facing = South))
+            assertThat(Rover(facing = South).receive(Left)).isEqualTo(Rover(facing = East))
+            assertThat(Rover(facing = East).receive(Left)).isEqualTo(Rover(facing = Direction.North))
         }
+    }
+
+    @Test
+    fun `Some fun Scenario`() {
+        Rover()
+            .receive(Forwards).also { assertThat(it).isEqualTo(Rover(at = at(0,1))) }
+            .receive(Forwards).also { assertThat(it).isEqualTo(Rover(at = at(0,2))) }
+            .receive(Right).also { assertThat(it).isEqualTo(Rover(at = at(0,2), facing = East)) }
+            .receive(Forwards).also { assertThat(it).isEqualTo(Rover(at = at(1,2), facing = East)) }
+            .receive(Right).also { assertThat(it).isEqualTo(Rover(at = at(1,2), facing = South)) }
+            .receive(Backwards).also { assertThat(it).isEqualTo(Rover(at = at(1,3), facing = South)) }
+            .receive(Left).also { assertThat(it).isEqualTo(Rover(at = at(1,3), facing = East)) }
     }
 }
 
 data class Rover(
-    private val at: Position = Position(0, 0),
+    private val at: Position = at(0, 0),
     private val facing: Direction = Direction.North
 ) {
     fun receive(command: Command): Rover {
@@ -158,16 +173,20 @@ sealed class Command {
 }
 
 
-data class Position(private val x: Int, private val y: Int) {
+data class Position private constructor(private val x: Int, private val y: Int) {
     fun move(moveDirection: Direction) = when (moveDirection) {
         Direction.North -> moveUp()
-        Direction.South -> moveDown()
+        South -> moveDown()
         Direction.West -> moveLeft()
-        Direction.East -> moveRight()
+        East -> moveRight()
     }
 
     private fun moveUp() = this.copy(y = this.y + 1)
     private fun moveDown() = this.copy(y = this.y - 1)
     private fun moveLeft() = this.copy(x = this.x - 1)
     private fun moveRight() = this.copy(x = this.x + 1)
+
+    companion object {
+        fun at(x: Int, y: Int) = Position(x,y)
+    }
 }
