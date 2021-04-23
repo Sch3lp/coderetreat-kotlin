@@ -166,19 +166,8 @@ data class Position(private val x: Int, private val y: Int) {
         Direction.East -> moveRight()
     }
 
-    private fun moveUp(): Position {
-        return this.copy(y = this.y + 1)
-    }
-
-    private fun moveDown(): Position {
-        return this.copy(y = this.y - 1)
-    }
-
-    private fun moveLeft(): Position {
-        return this.copy(x = this.x - 1)
-    }
-
-    private fun moveRight(): Position {
-        return this.copy(x = this.x + 1)
-    }
+    private fun moveUp() = this.copy(y = this.y + 1)
+    private fun moveDown() = this.copy(y = this.y - 1)
+    private fun moveLeft() = this.copy(x = this.x - 1)
+    private fun moveRight() = this.copy(x = this.x + 1)
 }
