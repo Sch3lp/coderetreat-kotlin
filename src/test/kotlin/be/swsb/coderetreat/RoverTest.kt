@@ -113,12 +113,22 @@ class RoverTest {
             .receive(Backwards).also { assertThat(it).isEqualTo(Rover(at = at(1,3), facing = South)) }
             .receive(Left).also { assertThat(it).isEqualTo(Rover(at = at(1,3), facing = East)) }
     }
+
+    @Test
+    fun `Receiving multiple commands`() {
+        val updatedRover = Rover().receive(listOf(Forwards, Forwards, Right, Forwards, Right, Backwards, Left))
+        assertThat(updatedRover).isEqualTo(Rover(at = at(1,3), facing = East))
+    }
+
 }
 
 data class Rover(
     private val at: Position = at(0, 0),
     private val facing: Direction = Direction.North
 ) {
+
+    fun receive(commands: List<Command>) = commands.fold(this) { acc, cmd -> acc.receive(cmd) }
+
     fun receive(command: Command): Rover {
         return when (command) {
             is Command.RotateCommand -> rotate(command)
