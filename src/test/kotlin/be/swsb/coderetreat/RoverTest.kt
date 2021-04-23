@@ -66,12 +66,47 @@ class RoverTest {
             assertThat(initiatedRover).isEqualTo(Rover(at = Position(-2, 0), facing = Direction.East))
         }
     }
+
+    @Nested
+    inner class ReceivingRight {
+        @Test
+        fun `A Rover rotates clockwise`() {
+            assertThat(Rover(facing = Direction.North).receive(Command.Right)).isEqualTo(Rover(facing = Direction.East))
+            assertThat(Rover(facing = Direction.East).receive(Command.Right)).isEqualTo(Rover(facing = Direction.South))
+            assertThat(Rover(facing = Direction.South).receive(Command.Right)).isEqualTo(Rover(facing = Direction.West))
+            assertThat(Rover(facing = Direction.West).receive(Command.Right)).isEqualTo(Rover(facing = Direction.North))
+        }
+    }
+
+    @Nested
+    inner class ReceivingLeft {
+        @Test
+        fun `A Rover rotates counter-clockwise`() {
+            assertThat(Rover(facing = Direction.North).receive(Command.Left)).isEqualTo(Rover(facing = Direction.West))
+            assertThat(Rover(facing = Direction.West).receive(Command.Left)).isEqualTo(Rover(facing = Direction.South))
+            assertThat(Rover(facing = Direction.South).receive(Command.Left)).isEqualTo(Rover(facing = Direction.East))
+            assertThat(Rover(facing = Direction.East).receive(Command.Left)).isEqualTo(Rover(facing = Direction.North))
+        }
+    }
 }
 
-data class Rover(private val at: Position = Position(0, 0), private val facing: Direction = Direction.North) {
+data class Rover(
+    private val at: Position = Position(0, 0),
+    private val facing: Direction = Direction.North
+) {
     fun receive(command: Command): Rover {
-        val moveDirection = if (command == Command.Backwards) facing.opposite() else facing
-        return this.copy(at = this.at.move(moveDirection))
+        return when (command) {
+            Command.Right -> {
+                this.copy(facing = facing.rotateClockwise())
+            }
+            Command.Left -> {
+                this.copy(facing = facing.rotateCounterClockwise())
+            }
+            else -> {
+                val moveDirection = if (command == Command.Backwards) facing.opposite() else facing
+                this.copy(at = this.at.move(moveDirection))
+            }
+        }
     }
 }
 
@@ -81,17 +116,28 @@ enum class Direction {
     West,
     East;
 
-    fun opposite(): Direction = when (this) {
+    fun opposite() = when (this) {
         North -> South
         South -> North
         West -> East
         East -> West
     }
+
+    fun rotateClockwise() = when (this) {
+        North -> East
+        East -> South
+        South -> West
+        West -> North
+    }
+
+    fun rotateCounterClockwise() = rotateClockwise().opposite()
 }
 
 enum class Command {
     Forwards,
-    Backwards
+    Backwards,
+    Right,
+    Left
 }
 
 data class Position(private val x: Int, private val y: Int) {
