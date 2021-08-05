@@ -21,7 +21,7 @@ class AbsenceCalculationEngineTest {
     inner class `Given employee is expected to work 8 hours on July 16th` {
         @Test
         fun `when employee didn't add absences, then sees 8 hours of work on July 16th`() {
-            val report = addAbsencesOn(July16)
+            val report = absencesOn(July16)
 
             assertThat(report.on(July16))
                 .containsExactly(8 hoursOf Work)
@@ -29,7 +29,9 @@ class AbsenceCalculationEngineTest {
 
         @Test
         fun `when employee adds absences, then sees 8 hours of work on July 16th`() {
-            val report = addAbsencesOn(July16, 8 hoursOf PaidLeave)
+            val report = absencesOn(July16) {
+                add(8 hoursOf PaidLeave)
+            }
 
             assertThat(report.on(July16))
                 .containsExactly(
@@ -43,9 +45,24 @@ class AbsenceCalculationEngineTest {
 
 }
 
-fun addAbsencesOn(date: LocalDate, vararg hours: StandardHours): Report {
-    val expectedFulltimeSchedule = mapOf(date to listOf(8 hoursOf Work))
-    return expectedFulltimeSchedule
+fun absencesOn(date: LocalDate, addAbsences: MutableList<StandardHours>.() -> Unit) : Report {
+    val absences = mutableListOf<StandardHours>()
+    absences.addAbsences()
+    return absencesOn(date, absences.toList())
+}
+
+fun absencesOn(date: LocalDate, hours: List<StandardHours> = emptyList()): Report {
+    val fulltimeDaily = 8 hoursOf Work
+
+    val newSchedule = mutableListOf<Hours>()
+    hours.forEach {
+        val (changedDaily, appliedHours, overruledHours) = fulltimeDaily.subtract(it)
+        newSchedule.add(changedDaily)
+        newSchedule.add(appliedHours)
+        newSchedule.add(overruledHours)
+    }
+
+    return mapOf(date to newSchedule)
 }
 
 // report
@@ -77,6 +94,15 @@ sealed class HoursType {
 sealed class Hours(val hours: Int, val type: HoursType) {
     data class StandardHours(private val _hours: Int, private val _type: WorkType): Hours(_hours, _type){
         override fun toString() = super.toString()
+        fun subtract(other: StandardHours): Triple<StandardHours, StandardHours, OverruledHours> {
+            val resultingHours = if (this._hours <= other._hours) 0 else this._hours - other._hours
+            val appliedHours = if (this._hours >= other._hours) other._hours else other._hours - this._hours
+            val overruledHours = if (this._hours <= resultingHours) this._hours else this._hours - resultingHours
+            val changed = this.copy(_hours = resultingHours)
+            val applied = other.copy(_hours = appliedHours)
+            val overruled = OverruledHours(overruledHours, OverruledWork)
+            return Triple(changed, applied, overruled)
+        }
     }
     data class OverruledHours(private val _hours: Int, private val _type: OverruledWorkType): Hours(_hours, _type) {
         override fun toString() = super.toString()
