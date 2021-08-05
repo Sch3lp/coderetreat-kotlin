@@ -36,3 +36,4 @@ enum class WorkType {
 // helper
 infix fun Int.hoursOf(worktype: WorkType) = this to worktype
 
+fun Pair<Int, WorkType>.toString() = "$first hours of $second"
