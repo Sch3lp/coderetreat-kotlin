@@ -1,7 +1,12 @@
 package be.swsb.coderetreat
 
-import be.swsb.coderetreat.WorkType.PaidLeave
-import be.swsb.coderetreat.WorkType.Work
+import be.swsb.coderetreat.Hours.OverruledHours
+import be.swsb.coderetreat.Hours.StandardHours
+import be.swsb.coderetreat.HoursType.OverruledWorkType
+import be.swsb.coderetreat.HoursType.WorkType
+import be.swsb.coderetreat.HoursType.OverruledWorkType.OverruledWork
+import be.swsb.coderetreat.HoursType.WorkType.PaidLeave
+import be.swsb.coderetreat.HoursType.WorkType.Work
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
@@ -29,7 +34,8 @@ class AbsenceCalculationEngineTest {
             assertThat(report.on(July16))
                 .containsExactly(
                     0 hoursOf Work,
-                    8 hoursOf PaidLeave
+                    8 hoursOf PaidLeave,
+                    8 hoursOf OverruledWork
                 )
         }
     }
@@ -37,8 +43,9 @@ class AbsenceCalculationEngineTest {
 
 }
 
-fun addAbsencesOn(date: LocalDate, vararg hours: Hours): Report {
-    return mapOf(date to listOf(8 hoursOf Work))
+fun addAbsencesOn(date: LocalDate, vararg hours: StandardHours): Report {
+    val expectedFulltimeSchedule = mapOf(date to listOf(8 hoursOf Work))
+    return expectedFulltimeSchedule
 }
 
 // report
@@ -46,17 +53,35 @@ typealias Report = Map<LocalDate, List<Hours>>
 
 fun Report.on(date: LocalDate): List<Hours> = this[date] ?: emptyList()
 
-enum class WorkType {
-    Work,
-    PaidLeave,
-    SickLeave,
-    PublicHoliday
-}
 
 // helper
-infix fun Int.hoursOf(worktype: WorkType) = Hours(this, worktype)
+infix fun Int.hoursOf(worktype: WorkType) = StandardHours(this, worktype)
+infix fun Int.hoursOf(overruledWorkType: OverruledWorkType) = OverruledHours(this, overruledWorkType)
 
-data class Hours(private val hours: Int, private val type: WorkType) {
+sealed class HoursType {
+    sealed class WorkType: HoursType() {
+        object Work : WorkType()
+        object PaidLeave : WorkType()
+        object SickLeave : WorkType()
+        object PublicHoliday : WorkType()
+    }
+    sealed class OverruledWorkType: HoursType() {
+        object OverruledWork : OverruledWorkType()
+        object OverruledPaidLeave : OverruledWorkType()
+        object OverruledSickLeave : OverruledWorkType()
+    }
+
+    override fun toString(): String = this::class.java.simpleName
+}
+
+sealed class Hours(val hours: Int, val type: HoursType) {
+    data class StandardHours(private val _hours: Int, private val _type: WorkType): Hours(_hours, _type){
+        override fun toString() = super.toString()
+    }
+    data class OverruledHours(private val _hours: Int, private val _type: OverruledWorkType): Hours(_hours, _type) {
+        override fun toString() = super.toString()
+    }
     override fun toString() = "$hours hours of $type"
 }
+
 
