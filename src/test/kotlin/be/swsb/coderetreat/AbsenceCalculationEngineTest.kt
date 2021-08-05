@@ -1,5 +1,6 @@
 package be.swsb.coderetreat
 
+import be.swsb.coderetreat.WorkType.PaidLeave
 import be.swsb.coderetreat.WorkType.Work
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Nested
@@ -18,14 +19,18 @@ class AbsenceCalculationEngineTest {
             val report = addAbsencesOn(July16)
 
             assertThat(report.on(July16))
-                .isEqualTo(8 hoursOf Work)
+                .containsExactly(8 hoursOf Work)
         }
+
         @Test
         fun `when employee adds absences, then sees 8 hours of work on July 16th`() {
-            val report = addAbsencesOn(July16)
+            val report = addAbsencesOn(July16, 8 hoursOf PaidLeave)
 
             assertThat(report.on(July16))
-                .isEqualTo(8 hoursOf Work)
+                .containsExactly(
+                    0 hoursOf Work,
+                    8 hoursOf PaidLeave
+                )
         }
     }
 
@@ -33,16 +38,19 @@ class AbsenceCalculationEngineTest {
 }
 
 fun addAbsencesOn(date: LocalDate, vararg hours: Hours): Report {
-    return mapOf()
+    return mapOf(date to listOf(8 hoursOf Work))
 }
 
 // report
-typealias Report = Map<LocalDate, Hours>
+typealias Report = Map<LocalDate, List<Hours>>
 
-fun Report.on(date: LocalDate) : Hours? = this[date]
+fun Report.on(date: LocalDate): List<Hours> = this[date] ?: emptyList()
 
 enum class WorkType {
-    Work
+    Work,
+    PaidLeave,
+    SickLeave,
+    PublicHoliday
 }
 
 // helper
