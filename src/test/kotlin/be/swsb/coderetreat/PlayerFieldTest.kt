@@ -81,4 +81,21 @@ class PlayerFieldTest {
             ))
         )
     }
+
+    @Test
+    fun `firing and missing a placed Carrier does not change the PlayerField`() {
+        val actual = PlayerField()
+                .place(Carrier, Point(5, 3), Vertically)
+                .fire(Point(6,3))
+
+        assertThat(actual).isEqualTo(
+            PlayerField(mapOf(
+                Point(5,3) to """⛴️""",
+                Point(5,4) to """⛴️""",
+                Point(5,5) to """⛴️""",
+                Point(5,6) to """⛴️""",
+                Point(5,7) to """⛴️""",
+            ))
+        )
+    }
 }
