@@ -101,7 +101,7 @@ class BattleshipTest {
         @Test
         fun `contains a Carrier on 5 positions on the x-axis when it was placed horizontally`() {
             val actual : PlayerField = PlayerField().place(Carrier, Point(1,1), Horizontally)
-            val carrierPoints = (Point(1, 1) + Point(5,1)).map { it to """⛴️""" }
+            val carrierPoints = (Point(1, 1) .. Point(5,1)).map { it to """⛴️""" }
 
             assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
         }
@@ -110,7 +110,7 @@ class BattleshipTest {
         @Disabled
         fun `contains a Carrier on 5 positions on the y-axis when it was placed vertically`() {
             val actual : PlayerField = PlayerField().place(Carrier, Point(1,1), Vertically)
-            val carrierPoints = (Point(1, 1) + Point(1,5)).map { it to """⛴️""" }
+            val carrierPoints = (Point(1, 1) .. Point(1,5)).map { it to """⛴️""" }
 
             assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
         }
@@ -128,7 +128,7 @@ class BattleshipTest {
 
 data class PlayerField(private val grid: Map<Point,String> = emptyMap()) {
     fun place(ship: Ship, startingPoint: Point, horizontally: Direction): PlayerField {
-        val newGrid = grid + (startingPoint + Point(ship.length, 1)).map { it to ship.representation }.toMap()
+        val newGrid = grid + (startingPoint .. Point(ship.length, 1)).map { it to ship.representation }.toMap()
         return copy(grid = newGrid)
     }
 }
@@ -143,12 +143,16 @@ fun renderField(carrierAt: Point? = null, direction: Direction): String = (1..10
 }
 
 fun renderPoint(renderPoint: Point, carrierAt: Point?): String =
-    if ((carrierAt != null) && (renderPoint in carrierAt + Point(5,0))) """⛴️"""
+    if ((carrierAt != null) && (renderPoint in carrierAt .. Point(5,0))) """⛴️"""
     else """🌊"""
 
 data class Point(val x: Int, val y: Int) {
-    operator fun plus(other: Point) : List<Point> =
+    operator fun rangeTo(other: Point) : List<Point> =
         (this.x..< this.x + other.x).map { this.copy(x = it) }
+
+    operator fun plus(other: Point): Point {
+        return this
+    }
 }
 
 enum class Direction {
