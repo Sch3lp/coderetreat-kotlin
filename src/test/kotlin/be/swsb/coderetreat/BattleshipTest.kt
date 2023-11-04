@@ -117,4 +117,32 @@ class BattleshipTest {
 
         assertThat(actual).isEqualTo(expected)
     }
+
+    @Test
+    fun `Firing can sink a placed carrier`() {
+        val expected = """
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🏊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🏊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🏊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🏊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🏊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+        """.trimIndent()
+
+        val actual: String =
+            PlayerField()
+                .place(Carrier, Point(5, 3), Vertically)
+                .fire(Point(5,3))
+                .fire(Point(5,4))
+                .fire(Point(5,5))
+                .fire(Point(5,6))
+                .fire(Point(5,7))
+                .render()
+
+        assertThat(actual).isEqualTo(expected)
+    }
 }
