@@ -189,23 +189,23 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
         return copy(grid = newGrid)
     }
 
-    fun get(point: Point): String? {
+    private fun get(point: Point): String? {
         return grid[point]
     }
+
+    fun renderField(): String = (1..10).joinToString("\n") { y ->
+        (1..10).joinToString("") { x ->
+            this.renderPoint(Point(x, y))
+        }
+    }
+
+    fun renderPoint(renderPoint: Point): String =
+        if (get(renderPoint) != null) get(renderPoint)!!
+        else """🌊"""
 }
 
 sealed class Ship(val representation: String, val length: Int)
 data object Carrier : Ship("""⛴️""", 5)
-
-fun PlayerField.renderField(): String = (1..10).joinToString("\n") { y ->
-    (1..10).joinToString("") { x ->
-        this.renderPoint(Point(x, y))
-    }
-}
-
-fun PlayerField.renderPoint(renderPoint: Point): String =
-    if (get(renderPoint) != null) get(renderPoint)!!
-    else """🌊"""
 
 data class Point(val x: Int, val y: Int) {
     operator fun rangeTo(other: Point): List<Point> {
