@@ -7,11 +7,14 @@ data class PlacedShip(
     val coordinates: Set<Point>,
     private val damage: Set<Point> = emptySet(),
 ) {
+    private val hasSunken get() = coordinates == damage
+
     fun damage(point: Point): PlacedShip =
         copy(damage = damage + point)
 
-    fun render(point: Point) = when (point) {
-        in damage -> """💥"""
+    fun render(point: Point) = when {
+        hasSunken -> """🏊"""
+        point in damage -> """💥"""
         else -> ship.representation
     }
 }
