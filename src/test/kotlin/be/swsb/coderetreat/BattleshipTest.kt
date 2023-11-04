@@ -141,6 +141,13 @@ class BattleshipTest {
                 .isThrownBy { PlayerField().place(Carrier, Point(1, -1), Vertically) }
                 .withMessage("Placing a Carrier at Point(x=1, y=-1) is out of bounds")
         }
+
+        @Test
+        fun `should not accept a ship that would be placed out of bounds, horizontally`() {
+            assertThatExceptionOfType(PlacementOutOfBounds::class.java)
+                .isThrownBy { PlayerField().place(Carrier, Point(-1, 1), Horizontally) }
+                .withMessage("Placing a Carrier at Point(x=-1, y=1) is out of bounds")
+        }
     }
 
     @Nested
@@ -202,8 +209,11 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
     }
 
     private fun validatePointsAreInBounds(shipCoordinates: List<Point>, ship: Ship) {
-        if (shipCoordinates.any { point -> point !in Point(1,1)..Point(1,10) })
-            throw PlacementOutOfBounds(ship, shipCoordinates.first())
+        val boundedPoints = (1..10).flatMap { x ->
+            (1..10).map { y -> Point(x, y) }
+        }
+        val shipCoordinatesOutOfBounds = shipCoordinates.any { point -> point !in boundedPoints }
+        if (shipCoordinatesOutOfBounds) throw PlacementOutOfBounds(ship, shipCoordinates.first())
     }
 
     fun render(): String =
