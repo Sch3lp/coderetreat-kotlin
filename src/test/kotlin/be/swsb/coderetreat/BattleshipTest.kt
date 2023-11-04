@@ -123,6 +123,18 @@ class BattleshipTest {
             val actual = Point(1,2) + Point(2,-4)
             assertThat(actual).isEqualTo(Point(3,-2))
         }
+
+        @Test
+        fun `can be ranged to another Point to produce a list of Points on the x axis when there's a matching y coordinate`() {
+            val actual = Point(-3,4) .. Point(1,4)
+            assertThat(actual).isEqualTo(listOf(
+                Point(-3,4),
+                Point(-2,4),
+                Point(-1,4),
+                Point(0,4),
+                Point(1,4),
+            ))
+        }
     }
 }
 
