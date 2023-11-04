@@ -189,10 +189,6 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
         return copy(grid = newGrid)
     }
 
-    private fun get(point: Point): String? {
-        return grid[point]
-    }
-
     fun renderField(): String = (1..10).joinToString("\n") { y ->
         (1..10).joinToString("") { x ->
             this.renderPoint(Point(x, y))
@@ -200,7 +196,7 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
     }
 
     fun renderPoint(renderPoint: Point): String =
-        if (get(renderPoint) != null) get(renderPoint)!!
+        if (grid[renderPoint] != null) grid[renderPoint]!!
         else """🌊"""
 }
 
