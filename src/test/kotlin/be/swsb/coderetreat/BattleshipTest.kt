@@ -158,11 +158,12 @@ class BattleshipTest {
 
 data class PlayerField(private val grid: Map<Point,String> = emptyMap()) {
     fun place(ship: Ship, startingPoint: Point, direction: Direction): PlayerField {
-        val newGrid = if (direction == Horizontally) {
-            grid + (startingPoint..Point(ship.length, 1)).map { it to ship.representation }.toMap()
+        val shipCoordinates = if (direction == Horizontally) {
+            startingPoint..Point(ship.length, 1)
         } else {
-            grid + (startingPoint..Point(1, ship.length)).map { it to ship.representation }.toMap()
+            startingPoint..Point(1, ship.length)
         }
+        val newGrid = grid + shipCoordinates.map { it to ship.representation }.toMap()
         return copy(grid = newGrid)
     }
 }
