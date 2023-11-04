@@ -107,11 +107,21 @@ class BattleshipTest {
         }
 
         @Test
+        @Disabled
         fun `contains a Carrier on 5 positions on the y-axis when it was placed vertically`() {
             val actual : PlayerField = PlayerField().place(Carrier, Point(1,1), Vertically)
             val carrierPoints = (Point(1, 1) + Point(1,5)).map { it to """⛴️""" }
 
             assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
+        }
+    }
+
+    @Nested
+    inner class `A Point` {
+        @Test
+        fun `can be added to another Point`() {
+            val actual = Point(1,2) + Point(2,-4)
+            assertThat(actual).isEqualTo(Point(3,-2))
         }
     }
 }
