@@ -139,14 +139,20 @@ class BattleshipTest {
         fun `should not accept a ship that would be placed out of bounds, vertically`() {
             assertThatExceptionOfType(PlacementOutOfBounds::class.java)
                 .isThrownBy { PlayerField().place(Carrier, Point(1, -1), Vertically) }
-                .withMessage("Placing a Carrier at Point(x=1, y=-1) is out of bounds")
+                .withMessage("Placing a Carrier Vertically at Point(x=1, y=-1) is out of bounds")
+            assertThatExceptionOfType(PlacementOutOfBounds::class.java)
+                .isThrownBy { PlayerField().place(Carrier, Point(1, 9), Vertically) }
+                .withMessage("Placing a Carrier Vertically at Point(x=1, y=9) is out of bounds")
         }
 
         @Test
         fun `should not accept a ship that would be placed out of bounds, horizontally`() {
             assertThatExceptionOfType(PlacementOutOfBounds::class.java)
                 .isThrownBy { PlayerField().place(Carrier, Point(-1, 1), Horizontally) }
-                .withMessage("Placing a Carrier at Point(x=-1, y=1) is out of bounds")
+                .withMessage("Placing a Carrier Horizontally at Point(x=-1, y=1) is out of bounds")
+            assertThatExceptionOfType(PlacementOutOfBounds::class.java)
+                .isThrownBy { PlayerField().place(Carrier, Point(9, 1), Horizontally) }
+                .withMessage("Placing a Carrier Horizontally at Point(x=9, y=1) is out of bounds")
         }
     }
 
@@ -195,7 +201,7 @@ class BattleshipTest {
     }
 }
 
-class PlacementOutOfBounds(ship: Ship, startingPoint: Point): Exception("Placing a $ship at $startingPoint is out of bounds")
+class PlacementOutOfBounds(ship: Ship, direction: Direction, startingPoint: Point): Exception("Placing a $ship $direction at $startingPoint is out of bounds")
 
 data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
     fun place(ship: Ship, startingPoint: Point, direction: Direction): PlayerField {
@@ -203,17 +209,17 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
             Horizontally -> startingPoint..<(startingPoint + Point(ship.length, 0))
             Vertically -> startingPoint..<(startingPoint + Point(0, ship.length))
         }
-        validatePointsAreInBounds(shipCoordinates, ship)
+        validatePointsAreInBounds(shipCoordinates, ship, direction)
         val newGrid = grid + shipCoordinates.map { it to ship.representation }.toMap()
         return copy(grid = newGrid)
     }
 
-    private fun validatePointsAreInBounds(shipCoordinates: List<Point>, ship: Ship) {
+    private fun validatePointsAreInBounds(shipCoordinates: List<Point>, ship: Ship, direction: Direction) {
         val boundedPoints = (1..10).flatMap { x ->
             (1..10).map { y -> Point(x, y) }
         }
         val shipCoordinatesOutOfBounds = shipCoordinates.any { point -> point !in boundedPoints }
-        if (shipCoordinatesOutOfBounds) throw PlacementOutOfBounds(ship, shipCoordinates.first())
+        if (shipCoordinatesOutOfBounds) throw PlacementOutOfBounds(ship, direction, shipCoordinates.first())
     }
 
     fun render(): String =
