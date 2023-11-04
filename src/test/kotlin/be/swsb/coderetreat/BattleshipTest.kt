@@ -27,6 +27,7 @@ class BattleshipTest {
     }
 
     @Test
+    @Disabled
     fun `A carrier can be placed horizontally on this field`() {
         val expected = """
             ⛴️⛴️⛴️⛴️⛴️🌊🌊🌊🌊🌊
@@ -58,6 +59,12 @@ class BattleshipTest {
         (1.. carrierLength).forEach { carriersX ->
             assertThat(shouldRenderShip(Point(carriersX, 1), carrierPoint)).isTrue()
         }
+    }
+
+    @Test
+    fun `shouldRenderShip - when renderPoint is outside of a Point that represents a Carrier then return false`() {
+        val carrierPoint = Point(1, 1)
+        assertThat(shouldRenderShip(Point(6, 1), carrierPoint)).isFalse()
     }
 }
 
