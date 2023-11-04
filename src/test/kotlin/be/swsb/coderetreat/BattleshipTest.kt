@@ -145,4 +145,31 @@ class BattleshipTest {
 
         assertThat(actual).isEqualTo(expected)
     }
+
+    @Test
+    fun `A fully placed PlayerField`() {
+        val expected = """
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊⛴️⛴️⛴️⛴️⛴️🌊🌊🌊
+            🌊🌊🛳️🛳️🛳️🛳️🌊🌊🌊🌊
+            🌊🌊🛥️🛥️🛥️🌊🌊🌊🌊🌊
+            🌊🌊🚤🚤🚤🌊🌊🌊🌊🌊
+            🌊🌊🛶🛶🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+        """.trimIndent()
+
+        val actual: String =
+            PlayerField()
+                .place(Carrier, Point(3, 3), Horizontally)
+                .place(Battleship, Point(3, 4), Horizontally)
+                .place(Destroyer, Point(3, 5), Horizontally)
+                .place(Submarine, Point(3, 6), Horizontally)
+                .place(PatrolBoat, Point(3, 7), Horizontally)
+                .render()
+
+        assertThat(actual).isEqualTo(expected)
+    }
 }
