@@ -149,7 +149,12 @@ class BattleshipTest {
             ))
         }
 
-        //rangeTo is empty when no matching x or y
+        @Test
+        fun `cannot be ranged to another Point when no match on either x or y coordinate`() {
+            val actual = Point(5,-3) .. Point(4,1)
+            assertThat(actual).isEqualTo(emptyList<Point>())
+        }
+
     }
 }
 
