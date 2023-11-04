@@ -170,7 +170,7 @@ fun renderField(carrierAt: Point? = null, direction: Direction): String = (1..10
 }
 
 fun renderPoint(renderPoint: Point, carrierAt: Point?): String =
-    if ((carrierAt != null) && (renderPoint in carrierAt .. Point(5,0))) """⛴️"""
+    if ((carrierAt != null) && (renderPoint in carrierAt .. Point(5,1))) """⛴️"""
     else """🌊"""
 
 data class Point(val x: Int, val y: Int) {
