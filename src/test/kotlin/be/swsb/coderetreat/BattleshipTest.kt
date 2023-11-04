@@ -67,6 +67,9 @@ fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") {
     }
 }
 
-fun shouldRenderShip(x: Int, y: Int, carrierAt: Point?) = Point(x, y) == carrierAt
+fun shouldRenderShip(x: Int, y: Int, carrierAt: Point?): Boolean {
+    return if (carrierAt == null) false
+    else Point(x, y) == carrierAt || Point(x,y) == Point(carrierAt.x + 4, carrierAt.y)
+}
 
 data class Point(val x: Int, val y: Int)
