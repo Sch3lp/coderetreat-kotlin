@@ -49,27 +49,27 @@ class BattleshipTest {
 
     @Test
     fun `shouldRenderShip - when renderPoint is at carrierPoint then return true`() {
-        assertThat(shouldRenderShip(1,1, Point(1,1))).isTrue()
+        assertThat(shouldRenderShip(Point(1, 1), Point(1,1))).isTrue()
     }
 
     @Test
     fun `shouldRenderShip - when renderPoint is at carrierPoint's x + 4 then also return true`() {
         val carrierPoint = Point(1, 1)
-        val actual = shouldRenderShip(carrierPoint.x + 4, 1, carrierPoint)
+        val actual = shouldRenderShip(Point(carrierPoint.x + 4, 1), carrierPoint)
         assertThat(actual).isTrue()
     }
 }
 
 fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") { y ->
     (1..10).joinToString("") { x ->
-        if (shouldRenderShip(x, y, carrierAt)) """⛴️"""
+        if (shouldRenderShip(Point(x, y), carrierAt)) """⛴️"""
         else """🌊"""
     }
 }
 
-fun shouldRenderShip(x: Int, y: Int, carrierAt: Point?): Boolean {
+fun shouldRenderShip(renderPoint: Point, carrierAt: Point?): Boolean {
     return if (carrierAt == null) false
-    else Point(x, y) == carrierAt || Point(x,y) == Point(carrierAt.x + 4, carrierAt.y)
+    else renderPoint == carrierAt || renderPoint == Point(carrierAt.x + 4, carrierAt.y)
 }
 
 data class Point(val x: Int, val y: Int)
