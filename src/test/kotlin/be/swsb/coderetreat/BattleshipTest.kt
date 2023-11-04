@@ -24,7 +24,7 @@ class BattleshipTest {
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
         """.trimIndent()
 
-        val actual: String = renderField(direction = Horizontally, field = PlayerField())
+        val actual: String = PlayerField().renderField(direction = Horizontally)
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -44,7 +44,9 @@ class BattleshipTest {
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
         """.trimIndent()
 
-        val actual: String = renderField(carrierAt = Point(1, 1), direction = Horizontally, field = PlayerField().place(Carrier, Point(1,1), Horizontally))
+        val actual: String =
+            PlayerField().place(Carrier, Point(1, 1), Horizontally)
+                .renderField(carrierAt = Point(1, 1), direction = Horizontally)
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -65,14 +67,16 @@ class BattleshipTest {
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
         """.trimIndent()
 
-        val actual: String = renderField(carrierAt = Point(1, 1), direction = Vertically, field = PlayerField().place(Carrier, Point(1,1), Vertically))
+        val actual: String =
+            PlayerField().place(Carrier, Point(1, 1), Vertically)
+                .renderField(carrierAt = Point(1, 1), direction = Vertically)
 
         assertThat(actual).isEqualTo(expected)
     }
 
     @Test
     fun `renderPoint - when renderPoint is at carrierPoint then return ⛴️`() {
-        assertThat(renderPoint(Point(1, 1), Point(1, 1), PlayerField().place(Carrier, Point(1,1),Horizontally))).isEqualTo("""⛴️""")
+        assertThat(PlayerField().place(Carrier, Point(1, 1), Horizontally).renderPoint(Point(1, 1), Point(1, 1))).isEqualTo("""⛴️""")
     }
 
     @Test
@@ -80,14 +84,15 @@ class BattleshipTest {
         val carrierPoint = Point(1, 1)
         val carrierLength = 5
         (1..carrierLength).forEach { carriersX ->
-            assertThat(renderPoint(Point(carriersX, 1), carrierPoint, PlayerField().place(Carrier, Point(1,1),Horizontally))).isEqualTo("""⛴️""")
+            assertThat(PlayerField().place(Carrier, Point(1, 1), Horizontally)
+                .renderPoint(Point(carriersX, 1), carrierPoint)).isEqualTo("""⛴️""")
         }
     }
 
     @Test
     fun `renderPoint - when renderPoint is outside of a Point that represents a Carrier then return 🌊`() {
         val carrierPoint = Point(1, 1)
-        assertThat(renderPoint(Point(6, 1), carrierPoint, PlayerField().place(Carrier, Point(1,1),Horizontally))).isEqualTo("""🌊""")
+        assertThat(PlayerField().place(Carrier, Point(1, 1), Horizontally).renderPoint(Point(6, 1), carrierPoint)).isEqualTo("""🌊""")
     }
 
     @Nested
@@ -194,18 +199,17 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
 sealed class Ship(val representation: String, val length: Int)
 data object Carrier : Ship("""⛴️""", 5)
 
-fun renderField(
-    field: PlayerField,
+fun PlayerField.renderField(
     carrierAt: Point? = null,
     direction: Direction
 ): String = (1..10).joinToString("\n") { y ->
     (1..10).joinToString("") { x ->
-        renderPoint(Point(x, y), carrierAt, field)
+        this.renderPoint(Point(x, y), carrierAt)
     }
 }
 
-fun renderPoint(renderPoint: Point, carrierAt: Point?, field: PlayerField): String =
-    if (field.get(renderPoint) != null) field.get(renderPoint)!!
+fun PlayerField.renderPoint(renderPoint: Point, carrierAt: Point?): String =
+    if (get(renderPoint) != null) get(renderPoint)!!
     else """🌊"""
 
 data class Point(val x: Int, val y: Int) {
