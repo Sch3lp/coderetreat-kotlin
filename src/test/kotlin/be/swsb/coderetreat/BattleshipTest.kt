@@ -82,5 +82,5 @@ fun shouldRenderShip(renderPoint: Point, carrierAt: Point?): Boolean {
 
 data class Point(val x: Int, val y: Int) {
     operator fun plus(other: Point) : List<Point> =
-        (this.x..this.x + other.x).map { this.copy(x = it) }
+        (this.x..< this.x + other.x).map { this.copy(x = it) }
 }
