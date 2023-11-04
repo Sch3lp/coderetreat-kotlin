@@ -52,7 +52,7 @@ data class PlayerField(
     }
 
     private fun validateShipWasNotPlacedYet(ship: Ship) {
-        if(ship in ships.map { it.ship }) throw Cheater("Where did you get that extra Carrier from? Cheater!")
+        if (ship in ships.map { it.ship }) throw Cheater("Where did you get that extra Carrier from? Cheater!")
     }
 
     fun render(): String =
@@ -85,6 +85,9 @@ data class PlayerField(
 
 sealed class Ship(val representation: String, val length: Int)
 data object Carrier : Ship("""⛴️""", 5)
+data object Battleship : Ship("""🛳️""", 4)
+data object Destroyer : Ship("""🛥️""", 3)
+data object Submarine : Ship("""🚤""", 3)
 data object PatrolBoat : Ship("""🛶""", 2)
 
 enum class Direction {
@@ -94,7 +97,9 @@ enum class Direction {
 
 class PlacementOutOfBounds(ship: Ship, direction: Direction, startingPoint: Point) :
     Exception("Placing a $ship $direction at $startingPoint is out of bounds")
+
 class PlacementOverlaps(violatingShip: Ship, placedShip: Ship) :
     Exception("Placing this $violatingShip would overlap with the already placed $placedShip")
-class Cheater(message: String):
+
+class Cheater(message: String) :
     Exception(message)
