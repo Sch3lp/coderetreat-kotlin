@@ -3,6 +3,7 @@ package be.swsb.coderetreat
 import be.swsb.coderetreat.Direction.Horizontally
 import be.swsb.coderetreat.Direction.Vertically
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -133,6 +134,13 @@ class BattleshipTest {
 
             assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
         }
+
+        @Test
+        fun `should not accept a ship that would be placed out of bounds, vertically`() {
+            assertThatExceptionOfType(PlacementOutOfBounds::class.java)
+                .isThrownBy { PlayerField().place(Carrier, Point(1, -1), Vertically) }
+                .withMessage("Placing a Carrier at (1,-1) is out of bounds")
+        }
     }
 
     @Nested
@@ -179,6 +187,8 @@ class BattleshipTest {
 
     }
 }
+
+class PlacementOutOfBounds: Exception()
 
 data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
     fun place(ship: Ship, startingPoint: Point, direction: Direction): PlayerField {
