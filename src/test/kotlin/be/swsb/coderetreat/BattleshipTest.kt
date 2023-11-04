@@ -48,9 +48,11 @@ class BattleshipTest {
 
 fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") { y ->
     (1..10).joinToString("") { x ->
-        if (Point(x,y) == carrierAt) """⛴️"""
+        if (shouldRenderShip(x, y, carrierAt)) """⛴️"""
         else """🌊"""
     }
 }
+
+private fun shouldRenderShip(x: Int, y: Int, carrierAt: Point?) = Point(x, y) == carrierAt
 
 data class Point(val x: Int, val y: Int)
