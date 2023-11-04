@@ -3,7 +3,6 @@ package be.swsb.coderetreat
 import be.swsb.coderetreat.Direction.Horizontally
 import be.swsb.coderetreat.Direction.Vertically
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
 
@@ -24,7 +23,7 @@ class BattleshipTest {
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
         """.trimIndent()
 
-        val actual: String = PlayerField().renderField()
+        val actual: String = PlayerField().render()
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -46,7 +45,7 @@ class BattleshipTest {
 
         val actual: String =
             PlayerField().place(Carrier, Point(1, 1), Horizontally)
-                .renderField()
+                .render()
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -68,30 +67,9 @@ class BattleshipTest {
 
         val actual: String =
             PlayerField().place(Carrier, Point(1, 1), Vertically)
-                .renderField()
+                .render()
 
         assertThat(actual).isEqualTo(expected)
-    }
-
-    @Test
-    fun `renderPoint - when renderPoint is at carrierPoint then return ⛴️`() {
-        assertThat(PlayerField().place(Carrier, Point(1, 1), Horizontally).renderPoint(Point(1, 1))).isEqualTo("""⛴️""")
-    }
-
-    @Test
-    fun `renderPoint - when renderPoint is on a Point that represents a Carrier then also return ⛴️`() {
-        val carrierLength = 5
-        (1..carrierLength).forEach { carriersX ->
-            assertThat(
-                PlayerField().place(Carrier, Point(1, 1), Horizontally)
-                    .renderPoint(Point(carriersX, 1))
-            ).isEqualTo("""⛴️""")
-        }
-    }
-
-    @Test
-    fun `renderPoint - when renderPoint is outside of a Point that represents a Carrier then return 🌊`() {
-        assertThat(PlayerField().place(Carrier, Point(1, 1), Horizontally).renderPoint(Point(6, 1))).isEqualTo("""🌊""")
     }
 
     @Nested
@@ -190,14 +168,14 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
         return copy(grid = newGrid)
     }
 
-    fun renderField(): String =
+    fun render(): String =
         (1..10).joinToString("\n") { y ->
             (1..10).joinToString("") { x ->
-                renderPoint(Point(x, y))
+                render(Point(x, y))
             }
         }
 
-    fun renderPoint(renderPoint: Point): String =
+    private fun render(renderPoint: Point): String =
         grid[renderPoint] ?: """🌊"""
 }
 
