@@ -1,7 +1,6 @@
 package be.swsb.coderetreat
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class BattleshipTest {
@@ -47,37 +46,35 @@ class BattleshipTest {
     }
 
     @Test
-    fun `shouldRenderShip - when renderPoint is at carrierPoint then return true`() {
-        assertThat(shouldRenderShip(Point(1, 1), Point(1,1))).isTrue()
+    fun `renderPoint - when renderPoint is at carrierPoint then return ⛴️`() {
+        assertThat(renderPoint(Point(1, 1), Point(1,1))).isEqualTo("""⛴️""")
     }
 
     @Test
-    fun `shouldRenderShip - when renderPoint is on a Point that represents a Carrier then also return true`() {
+    fun `renderPoint - when renderPoint is on a Point that represents a Carrier then also return ⛴️`() {
         val carrierPoint = Point(1, 1)
         val carrierLength = 5
         (1.. carrierLength).forEach { carriersX ->
-            assertThat(shouldRenderShip(Point(carriersX, 1), carrierPoint)).isTrue()
+            assertThat(renderPoint(Point(carriersX, 1), carrierPoint)).isEqualTo("""⛴️""")
         }
     }
 
     @Test
-    fun `shouldRenderShip - when renderPoint is outside of a Point that represents a Carrier then return false`() {
+    fun `renderPoint - when renderPoint is outside of a Point that represents a Carrier then return 🌊`() {
         val carrierPoint = Point(1, 1)
-        assertThat(shouldRenderShip(Point(6, 1), carrierPoint)).isFalse()
+        assertThat(renderPoint(Point(6, 1), carrierPoint)).isEqualTo("""🌊""")
     }
 }
 
 fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") { y ->
     (1..10).joinToString("") { x ->
-        if (shouldRenderShip(Point(x, y), carrierAt)) """⛴️"""
-        else """🌊"""
+        renderPoint(Point(x, y), carrierAt)
     }
 }
 
-fun shouldRenderShip(renderPoint: Point, carrierAt: Point?): Boolean {
-    return if (carrierAt == null) false
-    else renderPoint in carrierAt + Point(5,0)
-}
+fun renderPoint(renderPoint: Point, carrierAt: Point?): String =
+    if ((carrierAt != null) && (renderPoint in carrierAt + Point(5,0))) """⛴️"""
+    else """🌊"""
 
 data class Point(val x: Int, val y: Int) {
     operator fun plus(other: Point) : List<Point> =
