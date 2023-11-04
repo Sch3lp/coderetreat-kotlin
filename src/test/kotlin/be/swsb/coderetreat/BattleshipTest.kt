@@ -196,8 +196,7 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
     }
 
     fun renderPoint(renderPoint: Point): String =
-        if (grid[renderPoint] != null) grid[renderPoint]!!
-        else """🌊"""
+        grid[renderPoint]?: """🌊"""
 }
 
 sealed class Ship(val representation: String, val length: Int)
