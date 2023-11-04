@@ -110,7 +110,8 @@ class BattleshipTest {
 
 data class PlayerField(private val grid: Map<Point,String> = emptyMap()) {
     fun place(ship: String, startingPoint: Point, length: Int, horizontally: Direction): PlayerField {
-        return this
+        val newGrid = grid + (startingPoint + Point(length, 1)).map { it to ship }.toMap()
+        return copy(grid = newGrid)
     }
 }
 
