@@ -66,6 +66,14 @@ class PlayerFieldTest {
     }
 
     @Test
+    fun `should not accept a ship that overlaps with another ship`() {
+        val playerField = PlayerField().place(Carrier, Point(1, 4), Horizontally)
+        assertThatExceptionOfType(PlacementOverlaps::class.java)
+            .isThrownBy { playerField.place(PatrolBoat, Point(5,3), Vertically) }
+            .withMessage("Placing this PatrolBoat would overlap with the already placed Carrier")
+    }
+
+    @Test
     fun `should not accept a ship that was already placed`() {
         val playerField = PlayerField().place(Carrier, Point(1, 1), Horizontally)
         assertThatExceptionOfType(Cheater::class.java)

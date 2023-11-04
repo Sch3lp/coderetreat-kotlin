@@ -79,6 +79,8 @@ data class PlayerField(
 
 sealed class Ship(val representation: String, val length: Int)
 data object Carrier : Ship("""⛴️""", 5)
+data object PatrolBoat : Ship("""🛶""", 2)
+
 enum class Direction {
     Horizontally,
     Vertically,
@@ -86,6 +88,7 @@ enum class Direction {
 
 class PlacementOutOfBounds(ship: Ship, direction: Direction, startingPoint: Point) :
     Exception("Placing a $ship $direction at $startingPoint is out of bounds")
-
+class PlacementOverlaps(violatingShip: Ship, placedShip: Ship) :
+    Exception()
 class Cheater(message: String):
     Exception(message)
