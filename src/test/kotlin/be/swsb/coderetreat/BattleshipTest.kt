@@ -24,7 +24,7 @@ class BattleshipTest {
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
         """.trimIndent()
 
-        val actual: String = renderField(direction = Horizontally)
+        val actual: String = renderField(direction = Horizontally, field = PlayerField())
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -44,7 +44,7 @@ class BattleshipTest {
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
         """.trimIndent()
 
-        val actual: String = renderField(carrierAt = Point(1, 1), direction = Horizontally)
+        val actual: String = renderField(carrierAt = Point(1, 1), direction = Horizontally, field = PlayerField().place(Carrier, Point(1,1), Horizontally))
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -65,7 +65,7 @@ class BattleshipTest {
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
         """.trimIndent()
 
-        val actual: String = renderField(carrierAt = Point(1, 1), direction = Vertically)
+        val actual: String = renderField(carrierAt = Point(1, 1), direction = Vertically, field = PlayerField().place(Carrier, Point(1,1), Vertically))
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -185,13 +185,17 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
         val newGrid = grid + shipCoordinates.map { it to ship.representation }.toMap()
         return copy(grid = newGrid)
     }
+
+    fun get(point: Point): String? {
+        return grid[point]
+    }
 }
 
 sealed class Ship(val representation: String, val length: Int)
 data object Carrier : Ship("""⛴️""", 5)
 
 fun renderField(
-    field: PlayerField = PlayerField(),
+    field: PlayerField,
     carrierAt: Point? = null,
     direction: Direction
 ): String = (1..10).joinToString("\n") { y ->
@@ -201,7 +205,7 @@ fun renderField(
 }
 
 fun renderPoint(renderPoint: Point, carrierAt: Point?, field: PlayerField): String =
-    if ((carrierAt != null) && (renderPoint in carrierAt..Point(5, 1))) """⛴️"""
+    if (field.get(renderPoint) != null) field.get(renderPoint)!!
     else """🌊"""
 
 data class Point(val x: Int, val y: Int) {
