@@ -100,7 +100,7 @@ class BattleshipTest {
 
         @Test
         fun `contains a Carrier on 5 positions on the x-axis when it was placed horizontally`() {
-            val actual : PlayerField = PlayerField().place(Ship("""⛴️""", 5), Point(1,1), Horizontally)
+            val actual : PlayerField = PlayerField().place(Carrier, Point(1,1), Horizontally)
             val carrierPoints = (Point(1, 1) + Point(5,1)).map { it to """⛴️""" }
 
             assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
@@ -115,7 +115,8 @@ data class PlayerField(private val grid: Map<Point,String> = emptyMap()) {
     }
 }
 
-data class Ship(val representation: String, val length: Int)
+sealed class Ship(val representation: String, val length: Int)
+data object Carrier : Ship("""⛴️""", 5)
 
 fun renderField(carrierAt: Point? = null, direction: Direction): String = (1..10).joinToString("\n") { y ->
     (1..10).joinToString("") { x ->
