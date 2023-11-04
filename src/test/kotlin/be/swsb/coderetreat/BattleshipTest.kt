@@ -53,8 +53,10 @@ class BattleshipTest {
     }
 
     @Test
-    fun `shouldRenderShip - when renderPoint is at carrierPoint's x + 5 then also return true`() {
-        assertThat(shouldRenderShip(2,1, Point(1,1))).isTrue()
+    fun `shouldRenderShip - when renderPoint is at carrierPoint's x + 4 then also return true`() {
+        val carrierPoint = Point(1, 1)
+        val actual = shouldRenderShip(carrierPoint.x + 4, 1, carrierPoint)
+        assertThat(actual).isTrue()
     }
 }
 
