@@ -48,7 +48,8 @@ class BattleshipTest {
 
 fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") { y ->
     (1..10).joinToString("") { x ->
-        """🌊"""
+        if (Point(x,y) == carrierAt) """⛴️"""
+        else """🌊"""
     }
 }
 
