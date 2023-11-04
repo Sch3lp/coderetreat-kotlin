@@ -24,10 +24,32 @@ class BattleshipTest {
 
         assertThat(actual).isEqualTo(expected)
     }
+
+    @Test
+    fun `A carrier can be placed horizontally on this field`() {
+        val expected = """
+            ⛴️⛴️⛴️⛴️⛴️🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+        """.trimIndent()
+
+        val actual: String = renderField(carrierAt = Point(1,1))
+
+        assertThat(actual).isEqualTo(expected)
+    }
 }
 
-fun renderField(): String = (1..10).joinToString("\n") { y ->
+fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") { y ->
     (1..10).joinToString("") { x ->
         """🌊"""
     }
 }
+
+data class Point(val x: Int, val y: Int)
