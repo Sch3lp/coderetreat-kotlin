@@ -32,6 +32,7 @@ data class PlayerField(
             Vertically -> startingPoint..<(startingPoint + Point(0, ship.length))
         }
         validatePointsAreInBounds(shipCoordinates, ship, direction)
+        validateShipWasNotPlacedYet(ship)
         val newShips = ships + PlacedShip(ship, shipCoordinates.toSet())
         return copy(ships = newShips)
     }
@@ -42,6 +43,10 @@ data class PlayerField(
         }
         val shipCoordinatesOutOfBounds = shipCoordinates.any { point -> point !in boundedPoints }
         if (shipCoordinatesOutOfBounds) throw PlacementOutOfBounds(ship, direction, shipCoordinates.first())
+    }
+
+    private fun validateShipWasNotPlacedYet(ship: Ship) {
+        if(ship in ships.map { it.ship }) throw Cheater("Where did you get that extra Carrier from? Cheater!")
     }
 
     fun render(): String =
@@ -81,4 +86,6 @@ enum class Direction {
 
 class PlacementOutOfBounds(ship: Ship, direction: Direction, startingPoint: Point) :
     Exception("Placing a $ship $direction at $startingPoint is out of bounds")
-class Cheater: Exception()
+
+class Cheater(message: String):
+    Exception(message)
