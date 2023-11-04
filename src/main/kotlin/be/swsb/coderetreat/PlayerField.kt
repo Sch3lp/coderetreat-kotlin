@@ -29,7 +29,8 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
         }
 
     fun fire(target: Point): PlayerField {
-        return this
+        val newGrid = grid + mapOf(target to """💥""")
+        return copy(grid = newGrid)
     }
 
     private fun render(renderPoint: Point): String =

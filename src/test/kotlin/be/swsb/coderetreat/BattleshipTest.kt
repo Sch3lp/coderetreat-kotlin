@@ -95,7 +95,6 @@ class BattleshipTest {
     }
 
     @Test
-    @Disabled
     fun `Firing can hit a placed carrier`() {
         val expected = """
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
