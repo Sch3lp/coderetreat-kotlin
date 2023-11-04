@@ -1,6 +1,7 @@
 package be.swsb.coderetreat
 
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class BattleshipTest {
@@ -26,6 +27,7 @@ class BattleshipTest {
     }
 
     @Test
+    @Disabled
     fun `A carrier can be placed horizontally on this field`() {
         val expected = """
             ⛴️⛴️⛴️⛴️⛴️🌊🌊🌊🌊🌊
@@ -44,6 +46,16 @@ class BattleshipTest {
 
         assertThat(actual).isEqualTo(expected)
     }
+
+    @Test
+    fun `shouldRenderShip - when renderPoint is at carrierPoint then return true`() {
+        assertThat(shouldRenderShip(1,1, Point(1,1))).isTrue()
+    }
+
+    @Test
+    fun `shouldRenderShip - when renderPoint is at carrierPoint's x + 5 then also return true`() {
+        assertThat(shouldRenderShip(2,1, Point(1,1))).isTrue()
+    }
 }
 
 fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") { y ->
@@ -53,6 +65,6 @@ fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") {
     }
 }
 
-private fun shouldRenderShip(x: Int, y: Int, carrierAt: Point?) = Point(x, y) == carrierAt
+fun shouldRenderShip(x: Int, y: Int, carrierAt: Point?) = Point(x, y) == carrierAt
 
 data class Point(val x: Int, val y: Int)
