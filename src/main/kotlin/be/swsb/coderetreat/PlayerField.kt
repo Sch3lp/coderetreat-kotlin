@@ -28,6 +28,10 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
             }
         }
 
+    fun fire(target: Point): PlayerField {
+        return this
+    }
+
     private fun render(renderPoint: Point): String =
         grid[renderPoint] ?: """🌊"""
 }
