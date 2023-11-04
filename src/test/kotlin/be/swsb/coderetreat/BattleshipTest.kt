@@ -113,6 +113,14 @@ class BattleshipTest {
 
             assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
         }
+
+        @Test
+        fun `contains a Carrier on 5 positions on the y-axis when it was placed vertically, on another x coordinate`() {
+            val actual : PlayerField = PlayerField().place(Carrier, Point(4,1), Vertically)
+            val carrierPoints = (Point(4, 1) .. Point(4,5)).map { it to """⛴️""" }
+
+            assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
+        }
     }
 
     @Nested
