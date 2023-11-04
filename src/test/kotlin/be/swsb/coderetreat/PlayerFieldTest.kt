@@ -10,39 +10,39 @@ class PlayerFieldTest {
     @Test
     fun `is initially empty`() {
         val actual = PlayerField()
-        assertThat(actual).isEqualTo(PlayerField(emptyMap()))
+        assertThat(actual).isEqualTo(PlayerField(emptyList()))
     }
 
     @Test
     fun `contains a Carrier on 5 positions on the x-axis when it was placed horizontally`() {
         val actual: PlayerField = PlayerField().place(Carrier, Point(1, 1), Horizontally)
-        val carrierPoints = (Point(1, 1)..Point(5, 1)).map { it to """⛴️""" }
+        val carrierPoints = (Point(1, 1)..Point(5, 1)).toSet()
 
-        assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
+        assertThat(actual).isEqualTo(PlayerField(listOf(PlacedShip(Carrier, carrierPoints))))
     }
 
     @Test
     fun `contains a Carrier on 5 positions on the x-axis when it was placed horizontally, on another y coordinate`() {
         val actual: PlayerField = PlayerField().place(Carrier, Point(1, 4), Horizontally)
-        val carrierPoints = (Point(1, 4)..Point(5, 4)).map { it to """⛴️""" }
+        val carrierPoints = (Point(1, 4)..Point(5, 4)).toSet()
 
-        assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
+        assertThat(actual).isEqualTo(PlayerField(listOf(PlacedShip(Carrier, carrierPoints))))
     }
 
     @Test
     fun `contains a Carrier on 5 positions on the y-axis when it was placed vertically`() {
         val actual: PlayerField = PlayerField().place(Carrier, Point(1, 1), Vertically)
-        val carrierPoints = (Point(1, 1)..Point(1, 5)).map { it to """⛴️""" }
+        val carrierPoints = (Point(1, 1)..Point(1, 5)).toSet()
 
-        assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
+        assertThat(actual).isEqualTo(PlayerField(listOf(PlacedShip(Carrier, carrierPoints))))
     }
 
     @Test
     fun `contains a Carrier on 5 positions on the y-axis when it was placed vertically, on another x coordinate`() {
         val actual: PlayerField = PlayerField().place(Carrier, Point(4, 1), Vertically)
-        val carrierPoints = (Point(4, 1)..Point(4, 5)).map { it to """⛴️""" }
+        val carrierPoints = (Point(4, 1)..Point(4, 5)).toSet()
 
-        assertThat(actual).isEqualTo(PlayerField(carrierPoints.toMap()))
+        assertThat(actual).isEqualTo(PlayerField(listOf(PlacedShip(Carrier, carrierPoints))))
     }
 
     @Test
@@ -71,15 +71,9 @@ class PlayerFieldTest {
                 .place(Carrier, Point(5, 3), Vertically)
                 .fire(Point(5,3))
 
-        assertThat(actual).isEqualTo(
-            PlayerField(mapOf(
-                Point(5,3) to """💥""",
-                Point(5,4) to """⛴️""",
-                Point(5,5) to """⛴️""",
-                Point(5,6) to """⛴️""",
-                Point(5,7) to """⛴️""",
-            ))
-        )
+        val damagedCarrier = PlacedShip(Carrier, (Point(5, 3)..Point(5, 7)).toSet())
+            .damage(Point(5,3))
+        assertThat(actual).isEqualTo(PlayerField(listOf(damagedCarrier)))
     }
 
     @Test
@@ -89,13 +83,7 @@ class PlayerFieldTest {
                 .fire(Point(6,3))
 
         assertThat(actual).isEqualTo(
-            PlayerField(mapOf(
-                Point(5,3) to """⛴️""",
-                Point(5,4) to """⛴️""",
-                Point(5,5) to """⛴️""",
-                Point(5,6) to """⛴️""",
-                Point(5,7) to """⛴️""",
-            ))
+            PlayerField(listOf(PlacedShip(Carrier, (Point(5, 3)..Point(5, 7)).toSet())))
         )
     }
 
@@ -110,13 +98,7 @@ class PlayerFieldTest {
                 .fire(Point(5,7))
 
         assertThat(actual).isEqualTo(
-            PlayerField(mapOf(
-                Point(5,3) to """🏊""",
-                Point(5,4) to """🏊""",
-                Point(5,5) to """🏊""",
-                Point(5,6) to """🏊""",
-                Point(5,7) to """🏊""",
-            ))
+            PlayerField(listOf(PlacedShip(Carrier, (Point(5, 3)..Point(5, 7)).toSet(), (Point(5, 3)..Point(5, 7)).toSet())))
         )
     }
 }
