@@ -33,8 +33,14 @@ data class PlayerField(
         }
         validatePointsAreInBounds(shipCoordinates, ship, direction)
         validateShipWasNotPlacedYet(ship)
+        validateShipDoesNotOverlapWithAnAlreadyPlacedShip(shipCoordinates, ship)
         val newShips = ships + PlacedShip(ship, shipCoordinates.toSet())
         return copy(ships = newShips)
+    }
+
+    private fun validateShipDoesNotOverlapWithAnAlreadyPlacedShip(shipCoordinates: List<Point>, ship: Ship) {
+        val overlappingShips = shipCoordinates.mapNotNull { shipAt(it) }
+        if (overlappingShips.isNotEmpty()) throw PlacementOverlaps(ship, overlappingShips.first().ship)
     }
 
     private fun validatePointsAreInBounds(shipCoordinates: List<Point>, ship: Ship, direction: Direction) {
@@ -89,6 +95,6 @@ enum class Direction {
 class PlacementOutOfBounds(ship: Ship, direction: Direction, startingPoint: Point) :
     Exception("Placing a $ship $direction at $startingPoint is out of bounds")
 class PlacementOverlaps(violatingShip: Ship, placedShip: Ship) :
-    Exception()
+    Exception("Placing this $violatingShip would overlap with the already placed $placedShip")
 class Cheater(message: String):
     Exception(message)
