@@ -2,7 +2,11 @@ package be.swsb.coderetreat
 
 import be.swsb.coderetreat.Direction.*
 
-data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
+data class PlayerField(
+    private val grid: Map<Point, String> = emptyMap(),
+    private val ships: List<PlacedShip> = emptyList(),
+) {
+
     fun place(ship: Ship, startingPoint: Point, direction: Direction): PlayerField {
         val shipCoordinates = when (direction) {
             Horizontally -> startingPoint..<(startingPoint + Point(ship.length, 0))
@@ -10,7 +14,8 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
         }
         validatePointsAreInBounds(shipCoordinates, ship, direction)
         val newGrid = grid + shipCoordinates.map { it to ship.representation }.toMap()
-        return copy(grid = newGrid)
+        val newShips = ships + listOf(PlacedShip(ship.length, shipCoordinates))
+        return copy(grid = newGrid, ships = newShips)
     }
 
     private fun validatePointsAreInBounds(shipCoordinates: List<Point>, ship: Ship, direction: Direction) {
@@ -40,6 +45,9 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
 
 sealed class Ship(val representation: String, val length: Int)
 data object Carrier : Ship("""⛴️""", 5)
+
+data class PlacedShip(private val health: Int, private val coordinates: List<Point>)
+
 enum class Direction {
     Horizontally,
     Vertically,
