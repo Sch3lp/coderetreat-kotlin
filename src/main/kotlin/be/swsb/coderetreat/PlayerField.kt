@@ -81,3 +81,4 @@ enum class Direction {
 
 class PlacementOutOfBounds(ship: Ship, direction: Direction, startingPoint: Point) :
     Exception("Placing a $ship $direction at $startingPoint is out of bounds")
+class Cheater: Exception()

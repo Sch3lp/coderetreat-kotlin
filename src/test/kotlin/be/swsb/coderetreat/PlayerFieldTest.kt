@@ -66,6 +66,14 @@ class PlayerFieldTest {
     }
 
     @Test
+    fun `should not accept a ship that was already placed`() {
+        val playerField = PlayerField().place(Carrier, Point(1, 1), Horizontally)
+        assertThatExceptionOfType(Cheater::class.java)
+            .isThrownBy { playerField.place(Carrier, Point(1,3), Horizontally) }
+            .withMessage("Where did you get that extra Carrier from? Cheater!")
+    }
+
+    @Test
     fun `firing on a placed Carrier, marks that specific carrier point as damaged`() {
         val actual = PlayerField()
                 .place(Carrier, Point(5, 3), Vertically)
