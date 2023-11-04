@@ -72,6 +72,28 @@ class BattleshipTest {
         assertThat(actual).isEqualTo(expected)
     }
 
+    @Test
+    fun `A carrier can be placed vertically on the middle of a player field`() {
+        val expected = """
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊⛴️🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊⛴️🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊⛴️🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊⛴️🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊⛴️🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+        """.trimIndent()
+
+        val actual: String =
+            PlayerField().place(Carrier, Point(5, 3), Vertically)
+                .render()
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
     @Nested
     inner class `A PlayerField` {
         @Test
