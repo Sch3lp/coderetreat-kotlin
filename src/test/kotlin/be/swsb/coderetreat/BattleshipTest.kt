@@ -6,6 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
+import kotlin.math.absoluteValue
 
 class BattleshipTest {
 
@@ -159,8 +160,10 @@ fun renderPoint(renderPoint: Point, carrierAt: Point?): String =
     else """🌊"""
 
 data class Point(val x: Int, val y: Int) {
-    operator fun rangeTo(other: Point) : List<Point> =
-        (this.x..< this.x + other.x).map { this.copy(x = it) }
+    operator fun rangeTo(other: Point) : List<Point> {
+        val pointsBetween = if (this.x > other.x) this.x - other.x else other.x - this.x
+        return (this.x.. this.x + pointsBetween).map { this.copy(x = it) }
+    }
 
     operator fun plus(other: Point) =
         Point(this.x + other.x, this.y+other.y)
