@@ -150,9 +150,8 @@ data class Point(val x: Int, val y: Int) {
     operator fun rangeTo(other: Point) : List<Point> =
         (this.x..< this.x + other.x).map { this.copy(x = it) }
 
-    operator fun plus(other: Point): Point {
-        return this
-    }
+    operator fun plus(other: Point) =
+        Point(this.x + other.x, this.y+other.y)
 }
 
 enum class Direction {
