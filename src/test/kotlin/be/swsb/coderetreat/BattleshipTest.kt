@@ -26,4 +26,8 @@ class BattleshipTest {
     }
 }
 
-fun renderField(): String = TODO()
+fun renderField(): String = (1..10).joinToString("\n") { y ->
+    (1..10).joinToString("") { x ->
+        """🌊"""
+    }
+}
