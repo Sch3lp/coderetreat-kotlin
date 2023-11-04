@@ -3,6 +3,7 @@ package be.swsb.coderetreat
 import be.swsb.coderetreat.Direction.Horizontally
 import be.swsb.coderetreat.Direction.Vertically
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 
 class BattleshipTest {
@@ -94,6 +95,7 @@ class BattleshipTest {
     }
 
     @Test
+    @Disabled
     fun `Firing can hit a placed carrier`() {
         val expected = """
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊

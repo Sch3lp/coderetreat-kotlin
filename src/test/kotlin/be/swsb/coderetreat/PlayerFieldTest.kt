@@ -64,4 +64,21 @@ class PlayerFieldTest {
             .isThrownBy { PlayerField().place(Carrier, Point(9, 1), Horizontally) }
             .withMessage("Placing a Carrier Horizontally at Point(x=9, y=1) is out of bounds")
     }
+
+    @Test
+    fun `firing on a placed Carrier, marks that specific carrier point as damaged`() {
+        val actual = PlayerField()
+                .place(Carrier, Point(5, 3), Vertically)
+                .fire(Point(5,3))
+
+        assertThat(actual).isEqualTo(
+            PlayerField(mapOf(
+                Point(5,3) to """💥""",
+                Point(5,4) to """⛴️""",
+                Point(5,5) to """⛴️""",
+                Point(5,6) to """⛴️""",
+                Point(5,7) to """⛴️""",
+            ))
+        )
+    }
 }
