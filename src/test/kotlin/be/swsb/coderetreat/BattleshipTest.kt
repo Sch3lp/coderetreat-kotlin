@@ -6,7 +6,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Nested
 import org.junit.jupiter.api.Test
-import kotlin.math.absoluteValue
 
 class BattleshipTest {
 
@@ -158,9 +157,14 @@ class BattleshipTest {
 }
 
 data class PlayerField(private val grid: Map<Point,String> = emptyMap()) {
-    fun place(ship: Ship, startingPoint: Point, horizontally: Direction): PlayerField {
-        val newGrid = grid + (startingPoint .. Point(ship.length, 1)).map { it to ship.representation }.toMap()
-        return copy(grid = newGrid)
+    fun place(ship: Ship, startingPoint: Point, direction: Direction): PlayerField {
+        return if (direction == Horizontally) {
+            val newGrid = grid + (startingPoint..Point(ship.length, 1)).map { it to ship.representation }.toMap()
+            copy(grid = newGrid)
+        } else {
+            val newGrid = grid + (startingPoint..Point(1, ship.length)).map { it to ship.representation }.toMap()
+            copy(grid = newGrid)
+        }
     }
 }
 
