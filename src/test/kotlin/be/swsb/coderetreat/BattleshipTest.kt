@@ -27,7 +27,6 @@ class BattleshipTest {
     }
 
     @Test
-    @Disabled
     fun `A carrier can be placed horizontally on this field`() {
         val expected = """
             ⛴️⛴️⛴️⛴️⛴️🌊🌊🌊🌊🌊
