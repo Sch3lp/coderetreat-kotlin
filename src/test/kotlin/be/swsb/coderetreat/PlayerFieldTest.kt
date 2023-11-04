@@ -98,4 +98,25 @@ class PlayerFieldTest {
             ))
         )
     }
+
+    @Test
+    fun `firing and sinking a placed Carrier marks the Carrier as sunk`() {
+        val actual = PlayerField()
+                .place(Carrier, Point(5, 3), Vertically)
+                .fire(Point(5,3))
+                .fire(Point(5,4))
+                .fire(Point(5,5))
+                .fire(Point(5,6))
+                .fire(Point(5,7))
+
+        assertThat(actual).isEqualTo(
+            PlayerField(mapOf(
+                Point(5,3) to """🏊""",
+                Point(5,4) to """🏊""",
+                Point(5,5) to """🏊""",
+                Point(5,6) to """🏊""",
+                Point(5,7) to """🏊""",
+            ))
+        )
+    }
 }
