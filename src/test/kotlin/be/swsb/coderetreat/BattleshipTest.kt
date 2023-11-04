@@ -71,14 +71,10 @@ fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") {
 
 fun shouldRenderShip(renderPoint: Point, carrierAt: Point?): Boolean {
     return if (carrierAt == null) false
-    else {
-        val carrierCoordinates = carrierAt + 5
-        renderPoint in carrierCoordinates
-    }
+    else renderPoint in carrierAt + Point(5,0)
 }
 
 data class Point(val x: Int, val y: Int) {
-    operator fun plus(x: Int) : List<Point> {
-        return (this.x..this.x + x).map { this.copy(x = it) }
-    }
+    operator fun plus(other: Point) : List<Point> =
+        (this.x..this.x + other.x).map { this.copy(x = it) }
 }
