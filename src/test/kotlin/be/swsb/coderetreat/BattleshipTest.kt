@@ -52,7 +52,6 @@ class BattleshipTest {
     }
 
     @Test
-    @Disabled
     fun `A carrier can be placed vertically on this field`() {
         val expected = """
             ⛴️🌊🌊🌊🌊🌊🌊🌊🌊🌊
@@ -83,8 +82,10 @@ class BattleshipTest {
     fun `renderPoint - when renderPoint is on a Point that represents a Carrier then also return ⛴️`() {
         val carrierLength = 5
         (1..carrierLength).forEach { carriersX ->
-            assertThat(PlayerField().place(Carrier, Point(1, 1), Horizontally)
-                .renderPoint(Point(carriersX, 1))).isEqualTo("""⛴️""")
+            assertThat(
+                PlayerField().place(Carrier, Point(1, 1), Horizontally)
+                    .renderPoint(Point(carriersX, 1))
+            ).isEqualTo("""⛴️""")
         }
     }
 
@@ -189,14 +190,15 @@ data class PlayerField(private val grid: Map<Point, String> = emptyMap()) {
         return copy(grid = newGrid)
     }
 
-    fun renderField(): String = (1..10).joinToString("\n") { y ->
-        (1..10).joinToString("") { x ->
-            this.renderPoint(Point(x, y))
+    fun renderField(): String =
+        (1..10).joinToString("\n") { y ->
+            (1..10).joinToString("") { x ->
+                renderPoint(Point(x, y))
+            }
         }
-    }
 
     fun renderPoint(renderPoint: Point): String =
-        grid[renderPoint]?: """🌊"""
+        grid[renderPoint] ?: """🌊"""
 }
 
 sealed class Ship(val representation: String, val length: Int)
