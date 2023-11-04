@@ -136,6 +136,20 @@ class BattleshipTest {
                 Point(1,4),
             ))
         }
+
+        @Test
+        fun `can be ranged to another Point to produce a list of Points on the y axis when there's a matching x coordinate`() {
+            val actual = Point(4,-3) .. Point(4,1)
+            assertThat(actual).isEqualTo(listOf(
+                Point(4,-3),
+                Point(4,-2),
+                Point(4,-1),
+                Point(4,0),
+                Point(4,1),
+            ))
+        }
+
+        //rangeTo is empty when no matching x or y
     }
 }
 
