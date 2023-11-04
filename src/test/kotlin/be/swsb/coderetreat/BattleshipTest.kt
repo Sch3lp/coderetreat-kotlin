@@ -1,5 +1,7 @@
 package be.swsb.coderetreat
 
+import be.swsb.coderetreat.Direction.Horizontally
+import be.swsb.coderetreat.Direction.Vertically
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
@@ -20,7 +22,7 @@ class BattleshipTest {
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
         """.trimIndent()
 
-        val actual: String = renderField()
+        val actual: String = renderField(direction = Horizontally)
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -40,7 +42,27 @@ class BattleshipTest {
             🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
         """.trimIndent()
 
-        val actual: String = renderField(carrierAt = Point(1,1))
+        val actual: String = renderField(carrierAt = Point(1,1), direction = Horizontally)
+
+        assertThat(actual).isEqualTo(expected)
+    }
+
+    @Test
+    fun `A carrier can be placed vertically on this field`() {
+        val expected = """
+            ⛴️🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            ⛴️🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            ⛴️🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            ⛴️🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            ⛴️🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+            🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊
+        """.trimIndent()
+
+        val actual: String = renderField(carrierAt = Point(1,1), direction = Vertically)
 
         assertThat(actual).isEqualTo(expected)
     }
@@ -66,7 +88,7 @@ class BattleshipTest {
     }
 }
 
-fun renderField(carrierAt: Point? = null): String = (1..10).joinToString("\n") { y ->
+fun renderField(carrierAt: Point? = null, direction: Direction): String = (1..10).joinToString("\n") { y ->
     (1..10).joinToString("") { x ->
         renderPoint(Point(x, y), carrierAt)
     }
@@ -79,4 +101,9 @@ fun renderPoint(renderPoint: Point, carrierAt: Point?): String =
 data class Point(val x: Int, val y: Int) {
     operator fun plus(other: Point) : List<Point> =
         (this.x..< this.x + other.x).map { this.copy(x = it) }
+}
+
+enum class Direction {
+    Horizontally,
+    Vertically,
 }
