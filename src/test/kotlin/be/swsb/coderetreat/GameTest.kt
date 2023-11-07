@@ -16,8 +16,10 @@ class GameTest {
 }
 
 class Game {
-    val playerOne: String? = null
-    val playerTwo: String? = null
+    var playerOne: String? = null
+        private set
+    var playerTwo: String? = null
+        private set
 
     fun start() {
         check(playerOne != null && playerTwo != null) {
