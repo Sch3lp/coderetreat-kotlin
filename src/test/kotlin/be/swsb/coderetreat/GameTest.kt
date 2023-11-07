@@ -3,6 +3,7 @@ package be.swsb.coderetreat
 import be.swsb.coderetreat.Direction.*
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.Test
+import java.lang.IllegalArgumentException
 
 class GameTest {
 
@@ -81,6 +82,22 @@ class GameTest {
             .withMessage("Game is over already!")
     }
 
+    @Test
+    fun `After having placed all ships, players fire at each other in alternating fashion`() {
+        val game = Game.start("Bruce", "Selina")
+        val playerOne = game.playerOne
+        val playerTwo = game.playerTwo
+        val bothPlayersPlacedShips = game
+            .withAllShipsPlacedInTopLeftCorner(playerOne, Horizontally)
+            .withAllShipsPlacedInTopLeftCorner(playerTwo, Vertically)
+
+        assertThatExceptionOfType(IllegalArgumentException::class.java)
+            .isThrownBy {
+                bothPlayersPlacedShips
+                    .fire(playerOne, Point(1, 1))
+            }
+            .withMessage("Played out of turn! Right now it's Player1's turn.")
+    }
 }
 
 private fun Game.withAllShipsPlacedInTopLeftCorner(player: Player, direction: Direction): Game =
