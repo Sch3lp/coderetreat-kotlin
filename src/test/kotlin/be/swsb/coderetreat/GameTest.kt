@@ -29,7 +29,7 @@ class GameTest {
     }
 
     @Test
-    fun `A Game of Battleship is won when one player managed to sink all the other players' ships`() {
+    fun `A Game of Battleship is won when player one managed to sink all of player two's ships`() {
         val game = Game.start("Bruce", "Selina")
         val playerOne = game.playerOne
         val playerTwo = game.playerTwo
@@ -37,13 +37,13 @@ class GameTest {
             .withAllShipsPlacedInTopLeftCorner(playerOne, Horizontally)
             .withAllShipsPlacedInTopLeftCorner(playerTwo, Vertically)
 
-        val player2ShipCoordinates = (Point(1,1)..Point(1,2)) +
-                (Point(2,1)..Point(2,3)) +
-                (Point(3,1)..Point(3,3)) +
-                (Point(4,1)..Point(4,4)) +
-                (Point(5,1)..Point(5,5))
+        val player2ShipCoordinates = (Point(1, 1)..Point(1, 2)) +
+                (Point(2, 1)..Point(2, 3)) +
+                (Point(3, 1)..Point(3, 3)) +
+                (Point(4, 1)..Point(4, 4)) +
+                (Point(5, 1)..Point(5, 5))
 
-        val player2ShipsSunk = player2ShipCoordinates.fold(bothPlayersPlacedShips) { acc,point ->
+        val player2ShipsSunk = player2ShipCoordinates.fold(bothPlayersPlacedShips) { acc, point ->
             acc.fire(playerTwo, point)
         }
 
@@ -51,7 +51,32 @@ class GameTest {
 
         assertThat(player2ShipsSunk.winner).isEqualTo(playerOne)
         assertThatExceptionOfType(IllegalStateException::class.java)
-            .isThrownBy { player2ShipsSunk.fire(playerTwo, Point(9,9)) }
+            .isThrownBy { player2ShipsSunk.fire(playerTwo, Point(9, 9)) }
+            .withMessage("Game is over already!")
+    }
+
+    @Test
+    fun `A Game of Battleship is won when player two managed to sink all of player one's ships`() {
+        val game = Game.start("Bruce", "Selina")
+        val playerOne = game.playerOne
+        val playerTwo = game.playerTwo
+        val bothPlayersPlacedShips = game
+            .withAllShipsPlacedInTopLeftCorner(playerOne, Horizontally)
+            .withAllShipsPlacedInTopLeftCorner(playerTwo, Vertically)
+
+        val player1ShipCoordinates = (Point(1, 1)..Point(2, 1)) +
+                (Point(1, 2)..Point(3, 2)) +
+                (Point(1, 3)..Point(3, 3)) +
+                (Point(1, 4)..Point(4, 4)) +
+                (Point(1, 5)..Point(5, 5))
+
+        val player1ShipsSunk = player1ShipCoordinates.fold(bothPlayersPlacedShips) { acc, point ->
+            acc.fire(playerOne, point)
+        }
+
+        assertThat(player1ShipsSunk.winner).isEqualTo(playerTwo)
+        assertThatExceptionOfType(IllegalStateException::class.java)
+            .isThrownBy { player1ShipsSunk.fire(playerOne, Point(9, 9)) }
             .withMessage("Game is over already!")
     }
 
@@ -81,21 +106,21 @@ data class Game private constructor(
     val winner: Player? = null,
 ) {
 
-
     fun fire(target: Player, point: Point): Game {
         check(playerOneField.isComplete() && playerTwoField.isComplete())
         check(winner == null) { "Game is over already!" }
-        return when(target) {
+        return when (target) {
             is Player2 -> copy(playerTwoField = playerTwoField.fire(point))
-            else -> this
+            is Player1 -> copy(playerOneField = playerOneField.fire(point))
         }.orVictory()
     }
 
-    private fun orVictory(): Game {
-        return if (playerTwoField.allShipsSunk()) {
-            copy(winner = playerOne)
-        } else this
-    }
+    private fun orVictory(): Game =
+        when {
+            playerTwoField.allShipsSunk() -> copy(winner = playerOne)
+            playerOneField.allShipsSunk() -> copy(winner = playerTwo)
+            else -> this
+        }
 
     fun place(player: Player, ship: Ship, startingPoint: Point, direction: Direction): Game =
         when (player) {
