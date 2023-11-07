@@ -1,12 +1,22 @@
 package be.swsb.coderetreat
 
+import be.swsb.coderetreat.TurnOrderType.Alternating
+
 sealed interface TurnOrder {
     fun requireTurn(player: Player, lazyMessage: () -> String)
     fun next()
+    val type: TurnOrderType
 }
 
-class Alternating(playerOne: Player, playerTwo: Player) : TurnOrder {
+enum class TurnOrderType {
+    Alternating,
+    ExtraFireOnHit,
+}
+
+class AlternatingTurnOrder(playerOne: Player, playerTwo: Player) : TurnOrder {
     private val order = mutableListOf(playerOne, playerTwo)
+
+    override val type: TurnOrderType = Alternating
 
     override fun requireTurn(player: Player, lazyMessage: () -> String) =
         require(order.first() == player, lazyMessage)
@@ -22,7 +32,7 @@ data class Game private constructor(
     val playerOneField: PlayerField = PlayerField(),
     val playerTwoField: PlayerField = PlayerField(),
     val winner: Player? = null,
-    private val turnOrder: TurnOrder = Alternating(playerOne, playerTwo)
+    private val turnOrder: TurnOrder,
 ) {
 
     fun fire(target: Player, point: Point): Game {
@@ -61,7 +71,15 @@ data class Game private constructor(
         }
 
     companion object {
-        fun start(playerOne: String, playerTwo: String) = Game(Player1(playerOne), Player2(playerTwo))
+        fun start(playerOne: String, playerTwo: String, turnOrder: TurnOrderType = Alternating): Game {
+            val player1 = Player1(playerOne)
+            val player2 = Player2(playerTwo)
+            val turnOrderStrategy = when (turnOrder) {
+                Alternating -> AlternatingTurnOrder(player1, player2)
+                else -> AlternatingTurnOrder(player1, player2)
+            }
+            return Game(player1, player2, turnOrder = turnOrderStrategy)
+        }
     }
 }
 

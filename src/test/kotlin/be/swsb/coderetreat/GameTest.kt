@@ -111,6 +111,35 @@ class GameTest {
             }
             .withMessage("Played out of turn! Right now it's Player2's turn.")
     }
+
+    @Test
+    fun `After having placed all ships, players fire at each other in Hit allows another turn fashion`() {
+        val game = Game.start("Bruce", "Selina", TurnOrderType.ExtraFireOnHit)
+        val playerOne = game.playerOne
+        val playerTwo = game.playerTwo
+        val bothPlayersPlacedShips = game
+            .withAllShipsPlacedInTopLeftCorner(playerOne, Horizontally)
+            .withAllShipsPlacedInTopLeftCorner(playerTwo, Vertically)
+
+        assertThatExceptionOfType(IllegalArgumentException::class.java)
+            .isThrownBy {
+                bothPlayersPlacedShips
+                    .fire(playerOne, Point(1, 1))
+            }
+            .withMessage("Played out of turn! Right now it's Player1's turn.")
+
+        val playerOneHitsTwice = bothPlayersPlacedShips
+            .fire(playerTwo, Point(1, 1))
+            .fire(playerTwo, Point(1, 2))
+
+        assertThatExceptionOfType(IllegalArgumentException::class.java)
+            .isThrownBy {
+                playerOneHitsTwice
+                    .fire(playerTwo, Point(1, 3))
+            }
+            .withMessage("Played out of turn! Right now it's Player2's turn.")
+    }
+
 }
 
 private fun Game.withAllShipsPlacedInTopLeftCorner(player: Player, direction: Direction): Game =
