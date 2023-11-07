@@ -15,7 +15,10 @@ class GameTest {
 }
 
 class Game {
+    val playerOne: String? = null
+    val playerTwo: String? = null
+
     fun start() {
-        TODO("Not yet implemented")
+        check(playerOne != null && playerTwo != null)
     }
 }
