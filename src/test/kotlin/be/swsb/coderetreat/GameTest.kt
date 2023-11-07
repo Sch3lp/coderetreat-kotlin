@@ -84,6 +84,7 @@ data class Game private constructor(
 
     fun fire(target: Player, point: Point): Game {
         check(playerOneField.isComplete() && playerTwoField.isComplete())
+        check(winner == null) { "Game is over already!" }
         return when(target) {
             is Player2 -> copy(playerTwoField = playerTwoField.fire(point))
             else -> this
