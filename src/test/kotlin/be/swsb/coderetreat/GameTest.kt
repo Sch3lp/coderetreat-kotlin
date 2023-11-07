@@ -1,30 +1,29 @@
 package be.swsb.coderetreat
 
-import org.assertj.core.api.Assertions
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.lang.IllegalArgumentException
 
 class GameTest {
 
     @Test
     fun `A Game of Battleship cannot be started without player names`() {
-        Assertions.assertThatExceptionOfType(IllegalArgumentException::class.java)
-            .isThrownBy { Game.start(playerOne = "Bruce", playerTwo = "") }
+        val game = Game.start(playerOne = "", playerTwo = "")
+        assertThat(game).isEqualTo(Game.start("Red", "Blue"))
     }
 }
 
-class Game private constructor(
+data class Game private constructor(
     private val playerOne: Player,
     private val playerTwo: Player,
 ) {
 
     companion object {
-        fun start(playerOne: String, playerTwo: String) = Game(Player(playerOne), Player(playerTwo))
+        fun start(playerOne: String, playerTwo: String) = Game(Player(playerOne, "Red"), Player(playerTwo, "Blue"))
     }
 }
 
-data class Player(val name: String) {
-    init {
-        require(name.isNotBlank()) { "Cannot have blank as a player name" }
+data class Player private constructor(val name: String) {
+    companion object {
+        operator fun invoke(name: String, default: String) = Player(name.ifBlank { default })
     }
 }
