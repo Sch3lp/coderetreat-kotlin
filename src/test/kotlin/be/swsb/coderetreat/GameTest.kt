@@ -47,6 +47,8 @@ class GameTest {
             acc.fire(playerTwo, point)
         }
 
+        println(player2ShipsSunk.playerTwoField.render())
+
         assertThat(player2ShipsSunk.winner).isEqualTo(playerOne)
         assertThatExceptionOfType(IllegalStateException::class.java)
             .isThrownBy { player2ShipsSunk.fire(playerTwo, Point(9,9)) }
@@ -58,6 +60,7 @@ class GameTest {
 private fun Game.withAllShipsPlacedInTopLeftCorner(player: Player, direction: Direction): Game =
     Ship::class.sealedSubclasses
         .mapNotNull { it.objectInstance }
+        .sortedBy { it.length }
         .foldIndexed(this) { index, game, ship ->
             game.place(
                 player = player,
@@ -81,7 +84,16 @@ data class Game private constructor(
 
     fun fire(target: Player, point: Point): Game {
         check(playerOneField.isComplete() && playerTwoField.isComplete())
-        return this
+        return when(target) {
+            is Player2 -> copy(playerTwoField = playerTwoField.fire(point))
+            else -> this
+        }.orVictory()
+    }
+
+    private fun orVictory(): Game {
+        return if (playerTwoField.allShipsSunk()) {
+            copy(winner = playerOne)
+        } else this
     }
 
     fun place(player: Player, ship: Ship, startingPoint: Point, direction: Direction): Game =

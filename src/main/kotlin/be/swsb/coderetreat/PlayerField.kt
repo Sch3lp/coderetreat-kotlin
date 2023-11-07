@@ -7,7 +7,7 @@ data class PlacedShip(
     val coordinates: Set<Point>,
     private val damage: Set<Point> = emptySet(),
 ) {
-    private val hasSunken get() = coordinates == damage
+    val hasSunken get() = coordinates == damage
 
     fun damage(point: Point): PlacedShip =
         copy(damage = damage + point)
@@ -84,6 +84,9 @@ data class PlayerField(
     fun isComplete(): Boolean =
         ships.map { it.ship::class }
             .containsAll(Ship::class.sealedSubclasses)
+
+    fun allShipsSunk(): Boolean =
+        ships.all { it.hasSunken }
 }
 
 
