@@ -80,6 +80,10 @@ data class PlayerField(
 
     private fun render(renderPoint: Point): String =
         grid[renderPoint] ?: """🌊"""
+
+    fun isComplete(): Boolean =
+        ships.map { it.ship::class }
+            .containsAll(Ship::class.sealedSubclasses)
 }
 
 
