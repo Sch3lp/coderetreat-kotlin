@@ -17,6 +17,7 @@ class GameTest {
         val game = Game.start("Bruce", "Selina")
         assertThatExceptionOfType(IllegalStateException::class.java)
             .isThrownBy { game.fire(target = game.playerTwo, point = Point(1, 1)) }
+            .withMessage("Both players are required to place all of their ships first")
 
         val bothPlayersPlacedShips = game
             .withAllShipsPlacedInTopLeftCorner(game.playerOne, Horizontally)
@@ -90,11 +91,11 @@ private fun Game.withAllShipsPlacedInTopLeftCorner(player: Player, direction: Di
             game.place(
                 player = player,
                 ship = ship,
+                direction = direction,
                 startingPoint = when (direction) {
                     Horizontally -> Point(1, index + 1)
                     Vertically -> Point(index + 1, 1)
                 },
-                direction = direction
             )
         }
 
@@ -107,18 +108,18 @@ data class Game private constructor(
 ) {
 
     fun fire(target: Player, point: Point): Game {
-        check(playerOneField.isComplete() && playerTwoField.isComplete())
+        check(playerOneField.isComplete() && playerTwoField.isComplete()) { "Both players are required to place all of their ships first" }
         check(winner == null) { "Game is over already!" }
         return when (target) {
-            is Player2 -> copy(playerTwoField = playerTwoField.fire(point))
             is Player1 -> copy(playerOneField = playerOneField.fire(point))
+            is Player2 -> copy(playerTwoField = playerTwoField.fire(point))
         }.orVictory()
     }
 
     private fun orVictory(): Game =
         when {
-            playerTwoField.allShipsSunk() -> copy(winner = playerOne)
             playerOneField.allShipsSunk() -> copy(winner = playerTwo)
+            playerTwoField.allShipsSunk() -> copy(winner = playerOne)
             else -> this
         }
 
