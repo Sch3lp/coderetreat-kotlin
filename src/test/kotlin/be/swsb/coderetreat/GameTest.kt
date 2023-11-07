@@ -10,7 +10,8 @@ class GameTest {
     @Test
     fun `A Game of Battleship cannot be started without player names`() {
         val game = Game.start(playerOne = "", playerTwo = "")
-        assertThat(game).isEqualTo(Game.start("Red", "Blue"))
+        assertThat(game.playerOne).isEqualTo(Player1("Red"))
+        assertThat(game.playerTwo).isEqualTo(Player2("Blue"))
     }
 
     @Test
@@ -32,10 +33,10 @@ class GameTest {
 
     @Test
     fun `A Game of Battleship is won when player one managed to sink all of player two's ships`() {
-        val game = Game.start("Bruce", "Selina")
-        val playerOne = game.playerOne
-        val playerTwo = game.playerTwo
-        val bothPlayersPlacedShips = game
+        val startedGame = Game.start("Bruce", "Selina")
+        val playerOne = startedGame.playerOne
+        val playerTwo = startedGame.playerTwo
+        val bothPlayersPlacedShips = startedGame
             .withAllShipsPlacedInTopLeftCorner(playerOne, Horizontally)
             .withAllShipsPlacedInTopLeftCorner(playerTwo, Vertically)
 
@@ -45,8 +46,11 @@ class GameTest {
                 (Point(4, 1)..Point(4, 4)) +
                 (Point(5, 1)..Point(5, 5))
 
-        val player2ShipsSunk = player2ShipCoordinates.fold(bothPlayersPlacedShips) { acc, point ->
-            acc.fire(playerTwo, point)
+        val player2ShipsSunk = player2ShipCoordinates.fold(bothPlayersPlacedShips) { game, point ->
+            game.fire(playerTwo, point).let {
+                if (it.winner == null) it.fire(playerOne, Point(9,9))
+                else it
+            }
         }
 
         println(player2ShipsSunk.playerTwoField.render())
@@ -73,7 +77,8 @@ class GameTest {
                 (Point(1, 5)..Point(5, 5))
 
         val player1ShipsSunk = player1ShipCoordinates.fold(bothPlayersPlacedShips) { acc, point ->
-            acc.fire(playerOne, point)
+            acc.fire(playerTwo, Point(9,9))
+                .fire(playerOne, point)
         }
 
         assertThat(player1ShipsSunk.winner).isEqualTo(playerTwo)
@@ -97,6 +102,14 @@ class GameTest {
                     .fire(playerOne, Point(1, 1))
             }
             .withMessage("Played out of turn! Right now it's Player1's turn.")
+
+        assertThatExceptionOfType(IllegalArgumentException::class.java)
+            .isThrownBy {
+                bothPlayersPlacedShips
+                    .fire(playerTwo, Point(1, 1))
+                    .fire(playerTwo, Point(1, 2))
+            }
+            .withMessage("Played out of turn! Right now it's Player2's turn.")
     }
 }
 
