@@ -57,12 +57,11 @@ data class Game private constructor(
         return this
     }
 
-    fun place(player: Player, ship: Ship, startingPoint: Point, direction: Direction): Game {
-        return when (player) {
+    fun place(player: Player, ship: Ship, startingPoint: Point, direction: Direction): Game =
+        when (player) {
             is Player1 -> copy(playerOneField = playerOneField.place(ship, startingPoint, direction))
             is Player2 -> copy(playerTwoField = playerTwoField.place(ship, startingPoint, direction))
         }
-    }
 
     companion object {
         fun start(playerOne: String, playerTwo: String) = Game(Player1(playerOne), Player2(playerTwo))
