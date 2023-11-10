@@ -1,8 +1,9 @@
 package be.swsb.coderetreat
 
 import be.swsb.coderetreat.TurnOrderType.Alternating
+import kotlin.properties.Delegates
 
-sealed interface TurnOrder {
+sealed interface TurnOrder : GameEventListener {
     fun requireTurn(player: Player, lazyMessage: () -> String)
     fun next()
     val type: TurnOrderType
@@ -24,6 +25,33 @@ class AlternatingTurnOrder(playerOne: Player, playerTwo: Player) : TurnOrder {
     override fun next() =
         order.reverse()
 
+    override fun receive(event: String) {
+        //noop?
+    }
+
+}
+
+interface GameEventListener {
+    fun receive(event: String)
+}
+
+class ExtraFireOnHitTurnOrder : GameEventListener{
+    override fun receive(event: String) {
+    }
+}
+
+class GameEvents(events: List<String> = emptyList()) {
+    private lateinit var listener: GameEventListener
+
+    fun hook(turnOrder: TurnOrder) {
+        this.listener = turnOrder
+    }
+
+    val gameEvents by Delegates.observable(events) { _, old, new ->
+        if (old != new) {
+            listener.receive((new - old).first())
+        }
+    }
 }
 
 data class Game private constructor(
@@ -32,6 +60,7 @@ data class Game private constructor(
     val playerOneField: PlayerField = PlayerField(),
     val playerTwoField: PlayerField = PlayerField(),
     val winner: Player? = null,
+    private val events: GameEvents = GameEvents(),
     private val turnOrder: TurnOrder,
 ) {
 
@@ -78,9 +107,11 @@ data class Game private constructor(
                 Alternating -> AlternatingTurnOrder(player1, player2)
                 else -> AlternatingTurnOrder(player1, player2)
             }
-            return Game(player1, player2, turnOrder = turnOrderStrategy)
+            return Game(player1, player2, turnOrder = turnOrderStrategy).init()
         }
     }
+
+    private fun init(): Game = this.also { events.hook(turnOrder) }
 }
 
 sealed class Player(name: String, default: String) {
