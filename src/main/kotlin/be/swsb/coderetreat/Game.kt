@@ -17,8 +17,8 @@ data class Game private constructor(
         val player = target.opponent
         turnOrder.requireTurn(player) { "Played out of turn! Right now it's ${player.opponent.javaClass.simpleName}'s turn." }
         return when (target) {
-            is Player1 -> copy(playerOneField = playerOneField.fire(point)).also { turnOrder.next(playerOneField.lastFireResult) }
-            is Player2 -> copy(playerTwoField = playerTwoField.fire(point)).also { turnOrder.next(playerOneField.lastFireResult) }
+            is Player1 -> copy(playerOneField = playerOneField.fire(point).also { turnOrder.next(it.lastFireResult) })
+            is Player2 -> copy(playerTwoField = playerTwoField.fire(point).also { turnOrder.next(it.lastFireResult) })
         }.orVictory()
     }
 
