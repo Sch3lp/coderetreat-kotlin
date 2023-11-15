@@ -1,8 +1,9 @@
 package be.swsb.coderetreat
 
+import be.swsb.coderetreat.FireResult.*
 import kotlin.reflect.KClass
 
-data class Game private constructor(
+class Game private constructor(
     val playerOne: Player1,
     val playerTwo: Player2,
     val playerOneField: PlayerField = PlayerField(),
@@ -17,8 +18,8 @@ data class Game private constructor(
         val player = target.opponent
         turnOrder.requireTurn(player) { "Played out of turn! Right now it's ${player.opponent.javaClass.simpleName}'s turn." }
         return when (target) {
-            is Player1 -> copy(playerOneField = playerOneField.fire(point).also { turnOrder.next(it.lastFireResult) })
-            is Player2 -> copy(playerTwoField = playerTwoField.fire(point).also { turnOrder.next(it.lastFireResult) })
+            is Player1 -> updateFields(playerOneField = playerOneField.fire(point).also { turnOrder.next(it.lastFireResult) })
+            is Player2 -> updateFields(playerTwoField = playerTwoField.fire(point).also { turnOrder.next(it.lastFireResult) })
         }.orVictory()
     }
 
@@ -31,19 +32,66 @@ data class Game private constructor(
 
     private fun orVictory(): Game =
         when {
-            playerOneField.allShipsSunk() -> copy(winner = playerTwo)
-            playerTwoField.allShipsSunk() -> copy(winner = playerOne)
+            playerOneField.allShipsSunk() -> declareWinner(playerTwo)
+            playerTwoField.allShipsSunk() -> declareWinner(playerOne)
             else -> this
         }
 
+    private fun declareWinner(winner: Player) = copy(winner = winner)
+
     fun place(player: Player, ship: Ship, startingPoint: Point, direction: Direction): Game =
         when (player) {
-            is Player1 -> copy(playerOneField = playerOneField.place(ship, startingPoint, direction))
-            is Player2 -> copy(playerTwoField = playerTwoField.place(ship, startingPoint, direction))
+            is Player1 -> updateFields(playerOneField = playerOneField.place(ship, startingPoint, direction))
+            is Player2 -> updateFields(playerTwoField = playerTwoField.place(ship, startingPoint, direction))
         }
 
+    private fun updateFields(
+        playerOneField: PlayerField = this.playerOneField,
+        playerTwoField: PlayerField = this.playerTwoField,
+    ) = copy(playerOneField = playerOneField, playerTwoField = playerTwoField)
+
+
+    private fun copy(
+        playerOne: Player1 = this.playerOne,
+        playerTwo: Player2 = this.playerTwo,
+        playerOneField: PlayerField = this.playerOneField,
+        playerTwoField: PlayerField = this.playerTwoField,
+        winner: Player? = this.winner,
+        turnOrder: TurnOrder = this.turnOrder,
+    ) = Game(playerOne, playerTwo, playerOneField, playerTwoField, winner, turnOrder)
+
+    //Because data class private constructor still has a public "constructor" via .copy() function
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as Game
+
+        if (playerOne != other.playerOne) return false
+        if (playerTwo != other.playerTwo) return false
+        if (playerOneField != other.playerOneField) return false
+        if (playerTwoField != other.playerTwoField) return false
+        if (winner != other.winner) return false
+        if (turnOrder != other.turnOrder) return false
+
+        return true
+    }
+    override fun hashCode(): Int {
+        var result = playerOne.hashCode()
+        result = 31 * result + playerTwo.hashCode()
+        result = 31 * result + playerOneField.hashCode()
+        result = 31 * result + playerTwoField.hashCode()
+        result = 31 * result + (winner?.hashCode() ?: 0)
+        result = 31 * result + turnOrder.hashCode()
+        return result
+    }
+
     companion object {
-        fun start(playerOne: String, playerTwo: String, turnOrder: KClass<out TurnOrder> = AlternatingTurnOrder::class): Game {
+        fun start(
+            playerOne: String,
+            playerTwo: String,
+            turnOrder: KClass<out TurnOrder> = AlternatingTurnOrder::class
+        ): Game {
             val player1 = Player1(playerOne)
             val player2 = Player2(playerTwo)
             val turnOrderStrategy = when (turnOrder) {
@@ -77,7 +125,7 @@ class AlternatingTurnOrder(playerOne: Player, playerTwo: Player) : TurnOrder {
         order.reverse()
 }
 
-class ExtraFireOnHitTurnOrder(playerOne: Player, playerTwo: Player) : TurnOrder{
+class ExtraFireOnHitTurnOrder(playerOne: Player, playerTwo: Player) : TurnOrder {
     private val hitsPerPlayer = mutableMapOf(playerOne to 0, playerTwo to 0)
     private val order = mutableListOf(playerOne, playerTwo)
 
@@ -86,10 +134,10 @@ class ExtraFireOnHitTurnOrder(playerOne: Player, playerTwo: Player) : TurnOrder{
     }
 
     override fun next(lastFireResult: FireResult) {
-        when(lastFireResult) {
-            FireResult.NothingHappened -> order.reverse()
-            FireResult.Miss -> order.reverse().also { hitsPerPlayer[order.last()] = 0 }
-            FireResult.Hit -> if (hitsPerPlayer[order.first()] == 1) order.reverse().also { hitsPerPlayer[order.last()] = 0 }
+        when (lastFireResult) {
+            NothingHappened -> order.reverse()
+            Miss -> order.reverse().also { hitsPerPlayer[order.last()] = 0 }
+            Hit -> if (hitsPerPlayer[order.first()] == 1) order.reverse().also { hitsPerPlayer[order.last()] = 0 }
             else hitsPerPlayer[order.first()] = 1
         }
     }
