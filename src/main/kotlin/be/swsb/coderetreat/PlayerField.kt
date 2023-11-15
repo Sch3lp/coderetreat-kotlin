@@ -1,6 +1,7 @@
 package be.swsb.coderetreat
 
 import be.swsb.coderetreat.Direction.*
+import be.swsb.coderetreat.FireResult.*
 
 data class PlacedShip(
     val ship: Ship,
@@ -20,7 +21,8 @@ data class PlacedShip(
 }
 
 data class PlayerField(
-    private val ships: List<PlacedShip> = emptyList()
+    private val ships: List<PlacedShip> = emptyList(),
+    val lastFireResult: FireResult = NothingHappened,
 ) {
     private val grid: Map<Point, String> = ships.flatMap { ship ->
         ship.coordinates.map { point -> point to ship.render(point) }
@@ -63,10 +65,11 @@ data class PlayerField(
         }
 
     fun fire(target: Point): PlayerField {
+        val fireResult = if (shipAt(target) != null) Hit else Miss
         val newShips = shipAt(target)?.damage(target)
-            ?.let { ships.remove(it.ship) + it }
+            ?.let { damagedShip -> ships.remove(damagedShip.ship) + damagedShip }
             ?: ships
-        return copy(ships = newShips)
+        return copy(ships = newShips, lastFireResult = fireResult)
     }
 
     private fun List<PlacedShip>.remove(ship: Ship): List<PlacedShip> = toMutableList().apply {

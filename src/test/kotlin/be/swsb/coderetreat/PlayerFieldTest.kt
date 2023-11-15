@@ -89,7 +89,7 @@ class PlayerFieldTest {
 
         val damagedCarrier = PlacedShip(Carrier, (Point(5, 3)..Point(5, 7)).toSet())
             .damage(Point(5,3))
-        assertThat(actual).isEqualTo(PlayerField(listOf(damagedCarrier)))
+        assertThat(actual).isEqualTo(PlayerField(lastFireResult = FireResult.Hit, ships = listOf(damagedCarrier)))
     }
 
     @Test
@@ -99,7 +99,7 @@ class PlayerFieldTest {
                 .fire(Point(6,3))
 
         assertThat(actual).isEqualTo(
-            PlayerField(listOf(PlacedShip(Carrier, (Point(5, 3)..Point(5, 7)).toSet())))
+            PlayerField(lastFireResult = FireResult.Miss, ships = listOf(PlacedShip(Carrier, (Point(5, 3)..Point(5, 7)).toSet())))
         )
     }
 
@@ -114,7 +114,7 @@ class PlayerFieldTest {
                 .fire(Point(5,7))
 
         assertThat(actual).isEqualTo(
-            PlayerField(listOf(PlacedShip(Carrier, (Point(5, 3)..Point(5, 7)).toSet(), (Point(5, 3)..Point(5, 7)).toSet())))
+            PlayerField(lastFireResult = FireResult.Hit, ships = listOf(PlacedShip(Carrier, (Point(5, 3)..Point(5, 7)).toSet(), (Point(5, 3)..Point(5, 7)).toSet())))
         )
     }
 }

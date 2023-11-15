@@ -1,58 +1,6 @@
 package be.swsb.coderetreat
 
-import be.swsb.coderetreat.TurnOrderType.Alternating
-import kotlin.properties.Delegates
-
-sealed interface TurnOrder : GameEventListener {
-    fun requireTurn(player: Player, lazyMessage: () -> String)
-    fun next()
-    val type: TurnOrderType
-}
-
-enum class TurnOrderType {
-    Alternating,
-    ExtraFireOnHit,
-}
-
-class AlternatingTurnOrder(playerOne: Player, playerTwo: Player) : TurnOrder {
-    private val order = mutableListOf(playerOne, playerTwo)
-
-    override val type: TurnOrderType = Alternating
-
-    override fun requireTurn(player: Player, lazyMessage: () -> String) =
-        require(order.first() == player, lazyMessage)
-
-    override fun next() =
-        order.reverse()
-
-    override fun receive(event: String) {
-        //noop?
-    }
-
-}
-
-interface GameEventListener {
-    fun receive(event: String)
-}
-
-class ExtraFireOnHitTurnOrder : GameEventListener{
-    override fun receive(event: String) {
-    }
-}
-
-class GameEvents(events: List<String> = emptyList()) {
-    private lateinit var listener: GameEventListener
-
-    fun hook(turnOrder: TurnOrder) {
-        this.listener = turnOrder
-    }
-
-    val gameEvents by Delegates.observable(events) { _, old, new ->
-        if (old != new) {
-            listener.receive((new - old).first())
-        }
-    }
-}
+import kotlin.reflect.KClass
 
 data class Game private constructor(
     val playerOne: Player1,
@@ -60,7 +8,6 @@ data class Game private constructor(
     val playerOneField: PlayerField = PlayerField(),
     val playerTwoField: PlayerField = PlayerField(),
     val winner: Player? = null,
-    private val events: GameEvents = GameEvents(),
     private val turnOrder: TurnOrder,
 ) {
 
@@ -70,9 +17,9 @@ data class Game private constructor(
         val player = target.opponent
         turnOrder.requireTurn(player) { "Played out of turn! Right now it's ${player.opponent.javaClass.simpleName}'s turn." }
         return when (target) {
-            is Player1 -> copy(playerOneField = playerOneField.fire(point))
-            is Player2 -> copy(playerTwoField = playerTwoField.fire(point))
-        }.passTurn().orVictory()
+            is Player1 -> copy(playerOneField = playerOneField.fire(point)).also { turnOrder.next(playerOneField.lastFireResult) }
+            is Player2 -> copy(playerTwoField = playerTwoField.fire(point)).also { turnOrder.next(playerOneField.lastFireResult) }
+        }.orVictory()
     }
 
     private val Player.opponent: Player
@@ -81,10 +28,6 @@ data class Game private constructor(
                 is Player1 -> playerTwo
                 is Player2 -> playerOne
             }
-
-
-    private fun passTurn(): Game =
-        this.also { turnOrder.next() }
 
     private fun orVictory(): Game =
         when {
@@ -100,18 +43,56 @@ data class Game private constructor(
         }
 
     companion object {
-        fun start(playerOne: String, playerTwo: String, turnOrder: TurnOrderType = Alternating): Game {
+        fun start(playerOne: String, playerTwo: String, turnOrder: KClass<out TurnOrder> = AlternatingTurnOrder::class): Game {
             val player1 = Player1(playerOne)
             val player2 = Player2(playerTwo)
             val turnOrderStrategy = when (turnOrder) {
-                Alternating -> AlternatingTurnOrder(player1, player2)
-                else -> AlternatingTurnOrder(player1, player2)
+                AlternatingTurnOrder::class -> AlternatingTurnOrder(player1, player2)
+                ExtraFireOnHitTurnOrder::class -> ExtraFireOnHitTurnOrder(player1, player2)
+                else -> error("Unknown TurnOrder strategy: $turnOrder")
             }
-            return Game(player1, player2, turnOrder = turnOrderStrategy).init()
+            return Game(player1, player2, turnOrder = turnOrderStrategy)
         }
     }
+}
 
-    private fun init(): Game = this.also { events.hook(turnOrder) }
+enum class FireResult {
+    NothingHappened,
+    Hit,
+    Miss,
+}
+
+sealed interface TurnOrder {
+    fun requireTurn(player: Player, lazyMessage: () -> String)
+    fun next(lastFireResult: FireResult)
+}
+
+class AlternatingTurnOrder(playerOne: Player, playerTwo: Player) : TurnOrder {
+    private val order = mutableListOf(playerOne, playerTwo)
+
+    override fun requireTurn(player: Player, lazyMessage: () -> String) =
+        require(order.first() == player, lazyMessage)
+
+    override fun next(lastFireResult: FireResult) =
+        order.reverse()
+}
+
+class ExtraFireOnHitTurnOrder(playerOne: Player, playerTwo: Player) : TurnOrder{
+    private val hitsPerPlayer = mutableMapOf(playerOne to 0, playerTwo to 0)
+    private val order = mutableListOf(playerOne, playerTwo)
+
+    override fun requireTurn(player: Player, lazyMessage: () -> String) {
+        require(order.first() == player, lazyMessage)
+    }
+
+    override fun next(lastFireResult: FireResult) {
+        when(lastFireResult) {
+            FireResult.NothingHappened -> order.reverse()
+            FireResult.Miss -> order.reverse().also { hitsPerPlayer[order.last()] = 0 }
+            FireResult.Hit -> if (hitsPerPlayer[order.first()] == 1) order.reverse().also { hitsPerPlayer[order.last()] = 0 }
+            else hitsPerPlayer[order.first()] = 1
+        }
+    }
 }
 
 sealed class Player(name: String, default: String) {

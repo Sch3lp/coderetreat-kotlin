@@ -114,7 +114,7 @@ class GameTest {
 
     @Test
     fun `After having placed all ships, players fire at each other in Hit allows another turn fashion`() {
-        val game = Game.start("Bruce", "Selina", TurnOrderType.ExtraFireOnHit)
+        val game = Game.start("Bruce", "Selina", ExtraFireOnHitTurnOrder::class)
         val playerOne = game.playerOne
         val playerTwo = game.playerTwo
         val bothPlayersPlacedShips = game
