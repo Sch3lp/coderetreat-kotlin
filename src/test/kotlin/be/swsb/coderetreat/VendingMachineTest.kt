@@ -32,6 +32,21 @@ class VendingMachineTest {
     }
 
     @Test
+    fun `A VendingMachine displays total value of accepted coins`() {
+        val vendingMachine = VendingMachine()
+        vendingMachine.display().also { assertThat(it).isEqualTo("Insert Coin") }
+        vendingMachine
+            .insert(0.05.euro)
+            .insert(0.10.euro)
+            .insert(0.20.euro)
+            .insert(0.50.euro)
+            .insert(1.00.euro)
+            .insert(2.00.euro)
+            .display().also { assertThat(it).isEqualTo("3.85") }
+    }
+
+
+    @Test
     fun `A VendingMachine returns invalid coins`() {
         val vendingMachine = VendingMachine()
         vendingMachine.display().also { assertThat(it).isEqualTo("Insert Coin") }
