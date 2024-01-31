@@ -30,6 +30,37 @@ class VendingMachineTest {
             .insert(2.00.euro)
             .display().also { assertThat(it).isEqualTo("2.00") }
     }
+
+    @Test
+    fun `A VendingMachine returns invalid coins`() {
+        val vendingMachine = VendingMachine()
+        vendingMachine.display().also { assertThat(it).isEqualTo("Insert Coin") }
+        vendingMachine
+            .insert(invalidCoin)
+            .let {
+                assertThat(it.display()).isEqualTo("Insert Coin")
+                assertThat(it.returnBox).containsExactly(invalidCoin)
+            }
+        vendingMachine
+            .insert(0.02.euro)
+            .let {
+                assertThat(it.display()).isEqualTo("Insert Coin")
+                assertThat(it.returnBox).containsExactly(0.02.euro)
+            }
+        vendingMachine
+            .insert(0.01.euro)
+            .let {
+                assertThat(it.display()).isEqualTo("Insert Coin")
+                assertThat(it.returnBox).containsExactly(0.01.euro)
+            }
+        vendingMachine
+            .insert(0.10.euro)
+            .insert(invalidCoin)
+            .let {
+                assertThat(it.display()).isEqualTo("0.10")
+                assertThat(it.returnBox).containsExactly(invalidCoin)
+            }
+    }
 }
 
 data class Coin(
@@ -39,14 +70,18 @@ data class Coin(
 )
 
 
-class VendingMachine(private val coins: List<Coin> = mutableListOf()) {
+class VendingMachine(
+    private val insertedCoins: List<Coin> = mutableListOf(),
+    val returnBox: List<Coin> = mutableListOf(),
+) {
     fun display(): String = when {
-        coins.isEmpty() -> "Insert Coin"
-        else -> coins.mapNotNull { it.value }.sum().display()
+        insertedCoins.isEmpty() -> "Insert Coin"
+        else -> insertedCoins.mapNotNull { it.value }.sum().display()
     }
 
     fun insert(coin: Coin): VendingMachine {
-        return VendingMachine(coins + coin)
+        val (newCoins, returnBox) = (insertedCoins + coin).partition { it.canBeAccepted() }
+        return VendingMachine(newCoins, returnBox)
     }
 
     private val Coin.value
@@ -59,6 +94,8 @@ class VendingMachine(private val coins: List<Coin> = mutableListOf()) {
             Coin(25.75, 2.20, 8.50) -> 2.00
             else -> null
         }
+
+    private fun Coin.canBeAccepted() = this.value in listOf(2.00, 1.00, 0.50, 0.20, 0.10, 0.05)
 
     private fun Double.display() = String.format(Locale.US, "%.2f", this)
 }
