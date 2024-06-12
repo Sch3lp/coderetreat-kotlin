@@ -10,7 +10,7 @@ class BattleshipField(
     fun render(): String {
         return (0..<10).joinToString("\n") { y ->
             (0..<10).joinToString("") { x ->
-                if (placedShip != null && placedShip.x == x && placedShip.y == y) {
+                if (placedShip != null && Pair(x,y) in placedShip.positions) {
                     placedShip.icon
                 } else {
                     CellIcon.Wave.icon
@@ -20,12 +20,13 @@ class BattleshipField(
     }
 
     fun placeShip(ship: Ship, x: Int, y: Int, direction: Direction): BattleshipField {
-        return BattleshipField(placedShip = PlacedShip(
+        val placedShip = PlacedShip(
             ship = ship,
             x = x,
             y = y,
             direction = direction,
-        ))
+        )
+        return BattleshipField(placedShip = placedShip)
     }
 }
 
@@ -34,7 +35,17 @@ data class PlacedShip(
     val y: Int = 0,
     val ship: Ship,
     val direction: Direction,
-)
+) {
+    val positions: List<Pair<Int, Int>> =
+        (0..<ship.length)
+            .map { i ->
+                if (direction == Direction.Horizontal) {
+                    Pair(x + i, y)
+                } else {
+                    Pair(x, y + i)
+                }
+            }
+}
 
 enum class CellIcon(val icon: String) {
     Wave("""🌊"""),

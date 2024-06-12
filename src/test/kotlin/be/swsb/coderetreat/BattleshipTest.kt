@@ -1,6 +1,10 @@
 package be.swsb.coderetreat
 
+import be.swsb.coderetreat.Direction.Horizontal
+import be.swsb.coderetreat.Direction.Vertical
+import be.swsb.coderetreat.Ship.Carrier
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.Test
 
 
@@ -52,12 +56,63 @@ class BattleshipTest {
         """.trimIndent()
 
         val actual: String = BattleshipField()
-            .placeShip(ship = Ship.Carrier, x = 0, y = 0, direction = Direction.Horizontal)
+            .placeShip(
+                ship = Carrier,
+                x = 0,
+                y = 0,
+                direction = Horizontal
+            )
             .render()
 
         assertThat(actual).isEqualTo(expected)
     }
+
+    @Test
+    fun `a ship cannot be placed next to the board`() {
+        assertThatExceptionOfType(IllegalArgumentException::class.java)
+            .isThrownBy {
+                BattleshipField()
+                    .placeShip(Carrier, 8, 0, Horizontal)
+            }
+    }
 }
 
 
+class PlacedShipTest {
 
+    @Test
+    fun `a horizontally PlacedShip has positions that all have the same y axis`() {
+        val positions: List<Pair<Int, Int>> = PlacedShip(
+            0,
+            0,
+            Carrier,
+            Horizontal
+        ).positions
+
+        assertThat(positions).containsExactly(
+            Pair(0, 0),
+            Pair(1, 0),
+            Pair(2, 0),
+            Pair(3, 0),
+            Pair(4, 0),
+        )
+    }
+
+    @Test
+    fun `a vertically PlacedShip has positions that all have the same y axis`() {
+        val positions: List<Pair<Int, Int>> = PlacedShip(
+            0,
+            0,
+            Carrier,
+            Vertical
+        ).positions
+
+        assertThat(positions).containsExactly(
+            Pair(0, 0),
+            Pair(0, 1),
+            Pair(0, 2),
+            Pair(0, 3),
+            Pair(0, 4),
+        )
+    }
+}
